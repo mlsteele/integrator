@@ -1,12 +1,12 @@
 class Expression(object):
   def __init__(self):
-    raise "Expression is an abstract class"
+    raise Exception("Expression is an abstract class")
 
   def simplified(self):
     return self
 
   def latex(self):
-    raise "latex not implemented for %s" % self
+    raise Exception("latex not implemented for %s" % self)
 
 
 class Number(Expression):
@@ -17,10 +17,10 @@ class Number(Expression):
     return str(self.n)
 
 
-class Fraction(Expression):
-  def __init__(self, numerator, denominator):
-    self.numerator   = numerator
-    self.denominator = numerator
+# class Fraction(Expression):
+#   def __init__(self, numerator, denominator):
+#     self.numerator   = numerator
+#     self.denominator = numerator
 
 
 class Variable(Expression):
