@@ -116,7 +116,7 @@ class Power(Expression):
       return Power(base.simplified(), exponent.simplified())
 
   def __repr__(self):
-    return "(%s ^ %s)" %(self.a, self.b)
+    return "(%s ^ %s)" %(self.base, self.exponent)
 
 
 class Integral(Expression):
