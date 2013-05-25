@@ -23,12 +23,41 @@ class Number(Expression):
 #     self.denominator = numerator
 
 
+# unique set of variables
+class VariableSet(object):
+  def __init__(self):
+    self.lookup = {}
+
+  def new_variable(self, symbol=None):
+    if symbol in self.lookup.keys():
+      raise ValueError('symbol "' + symbol + '" already used in VariableSet')
+    if symbol == None:
+      symbol = self.unused_symbol()
+
+    v = Variable(self)
+    self.lookup[v] = symbol
+    return v
+
+  def unused_symbol(self):
+    # TODO fix
+    return 'BADVAR'
+
+  def symbol_for(self, var):
+    return self.lookup[var]
+
+
+# do not instantiate this class, use variableset.new_variable(optional_symbol)
 class Variable(Expression):
-  def __init__(self, symbol):
-    self.symbol = symbol
+  def __init__(self, vset):
+    if not isinstance(vset, VariableSet):
+      raise Exception('Variable instantiated without VariableSet')
+    self.vset = vset
+
+  def symbol(self):
+    return self.vset.symbol_for(self)
 
   def __repr__(self):
-    return self.symbol
+    return self.symbol()
 
 
 class Sum(Expression):

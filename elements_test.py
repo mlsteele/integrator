@@ -25,9 +25,11 @@ def test_Number():
 
 
 def test_Variable():
-  v1 = Variable('x')
-  assert_equal(v1.symbol, 'x')
-  assert_equal(v1.simplified().symbol, 'x')
+  vset = VariableSet()
+  v1 = vset.new_variable('x')
+  assert_equal(v1.symbol(), 'x')
+  assert_equal(v1.simplified().symbol(), 'x')
+  assert_equal(v1.simplified(), v1)
 
 
 def test_Sum():
@@ -38,10 +40,11 @@ def test_Sum():
   assert_equal(x.n, 3)
   assert_equal(y.n, 6)
 
-  x = Variable('x')
+  vset = VariableSet()
+  x = vset.new_variable('x')
   y = Number(6)
   s = Sum(x,y)
-  assert_equal(s.simplified().a.symbol, 'x')
+  assert_equal(s.simplified().a.symbol(), 'x')
   assert_equal(s.simplified().b.n, 6)
 
   x = Sum(Number(4), Number(3))
@@ -58,10 +61,11 @@ def test_Product():
   assert_equal(x.n, 3)
   assert_equal(y.n, 6)
 
-  x = Variable('x')
+  vset = VariableSet()
+  x = vset.new_variable('x')
   y = Number(6)
   s = Product(x,y)
-  assert_equal(s.simplified().a.symbol, 'x')
+  assert_equal(s.simplified().a.symbol(), 'x')
   assert_equal(s.simplified().b.n, 6)
 
 
@@ -69,12 +73,12 @@ def test_Integral():
   exp = Number(5)
   intg = Integral(exp, 'x')
   assert_equal(intg.exp.n, 5)
-  assert_equal(intg.var.symbol, 'x')
+  assert_equal(intg.var.symbol(), 'x')
 
   exp = Sum(Number(5), Number(3))
   intg = Integral(exp, 'y')
   assert_equal(intg.simplify().exp.n, 8)
-  assert_equal(intg.simplify().var.symbol, 'y')
+  assert_equal(intg.simplify().var.symbol(), 'y')
 
 
 def test_Power():
