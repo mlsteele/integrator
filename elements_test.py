@@ -1,21 +1,5 @@
-import traceback
+from test_frame import *
 from elements import *
-
-def assert_equal(a,b):
-  if a != b:
-    errstr = "ASSERT FAILED: %s != %s" %(a,b)
-    print errstr
-    raise ValueError(errstr)
-  return True
-
-def do_test(test, name):
-  try:
-    test()
-  except Exception as ex:
-    print '    ' + '\n    '.join(traceback.format_exc().split('\n'))
-    print "X test FAILED: %s" %name
-  else:
-    print "- test passed: %s" %name
 
 def test_Expression():
   try:
@@ -24,6 +8,7 @@ def test_Expression():
     pass
   else:
     assert_equal('abstract class', 'instantiable')
+
 
 def test_Number():
   n1 = Number(3)
@@ -44,6 +29,7 @@ def test_Variable():
   assert_equal(v1.symbol, 'x')
   assert_equal(v1.simplified().symbol, 'x')
 
+
 def test_Sum():
   x = Number(3)
   y = Number(6)
@@ -63,6 +49,7 @@ def test_Sum():
   s = Sum(x,y)
   assert_equal(s.simplified().n, 13)
 
+
 def test_Product():
   x = Number(3)
   y = Number(6)
@@ -77,6 +64,7 @@ def test_Product():
   assert_equal(s.simplified().a.symbol, 'x')
   assert_equal(s.simplified().b.n, 6)
 
+
 def test_Integral():
   exp = Number(5)
   intg = Integral(exp, 'x')
@@ -87,6 +75,7 @@ def test_Integral():
   intg = Integral(exp, 'y')
   assert_equal(intg.simplify().exp.n, 8)
   assert_equal(intg.simplify().var.symbol, 'y')
+
 
 def test_Power():
   b = Number(5)
