@@ -1,13 +1,21 @@
+import traceback
 from elements import *
 
 def assert_equal(a,b):
   if a != b:
     errstr = "ASSERT FAILED: %s != %s" %(a,b)
-    raise Exception(errstr)
+    print errstr
+    raise ValueError(errstr)
   return True
 
 def do_test(test, name):
-  print "test passed: %s" %name
+  try:
+    test()
+  except Exception as ex:
+    print '    ' + '\n    '.join(traceback.format_exc().split('\n'))
+    print "X test FAILED: %s" %name
+  else:
+    print "- test passed: %s" %name
 
 def test_Expression():
   try:
@@ -40,7 +48,7 @@ def test_Sum():
   x = Number(3)
   y = Number(6)
   s = Sum(x,y)
-  assert_equal(s.simplified.n, 9)
+  assert_equal(s.simplified().n, 9)
   assert_equal(x.n, 3)
   assert_equal(y.n, 6)
 
@@ -48,13 +56,18 @@ def test_Sum():
   y = Number(6)
   s = Sum(x,y)
   assert_equal(s.simplified().a.symbol, 'x')
-  assert_equal(s.simplified().b.n, '6')
+  assert_equal(s.simplified().b.n, 6)
+
+  x = Sum(Number(4), Number(3))
+  y = Number(6)
+  s = Sum(x,y)
+  assert_equal(s.simplified().n, 13)
 
 def test_Product():
   x = Number(3)
   y = Number(6)
   s = Product(x,y)
-  assert_equal(s.simplified.n, 18)
+  assert_equal(s.simplified().n, 18)
   assert_equal(x.n, 3)
   assert_equal(y.n, 6)
 
@@ -62,7 +75,7 @@ def test_Product():
   y = Number(6)
   s = Product(x,y)
   assert_equal(s.simplified().a.symbol, 'x')
-  assert_equal(s.simplified().b.n, '6')
+  assert_equal(s.simplified().b.n, 6)
 
 def test_Integral():
   exp = Number(5)
@@ -75,10 +88,25 @@ def test_Integral():
   assert_equal(intg.simplify().exp.n, 8)
   assert_equal(intg.simplify().var.symbol, 'y')
 
+def test_Power():
+  b = Number(5)
+  e = Number(3)
+  p = Power(b, e)
+  assert_equal(p.base.n, 5)
+  assert_equal(p.exponent.n, 3)
+  assert_equal(p.simplified().n, 125)
+
+  b = Sum(Number(5), Number(3.5))
+  e = Number(3)
+  p = Power(b, e)
+  assert_equal(p.base.simplified().n, 8.5)
+  assert_equal(p.exponent.n, 3)
+  assert_equal(p.simplified().n, 614.125)
+
 if __name__ == "__main__":
   do_test(test_Expression, "Expression")
   do_test(test_Number,     "Number")
   do_test(test_Variable,   "Variable")
   do_test(test_Sum,        "Sum")
   do_test(test_Product,    "Product")
-  do_test(test_Integral,   "Integral")
+  do_test(test_Power,      "Power")
