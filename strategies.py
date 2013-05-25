@@ -46,8 +46,8 @@ class NumberExponent(IntegrationStrategy):
   def apply(self, intg):
     expr = intg.simplified().exp
     # TODO do not use floating point reciprocal!!!
-    recip_n = Number(1 / float(expr.exponent.n))
-    n_plus_one = Sum(expr.exponent, Number(1))
+    n_plus_one = Sum(expr.exponent, Number(1)).simplified()
+    recip_n = Number(1 / float(n_plus_one.n))
     return Product(recip_n, Power(intg.var, n_plus_one))
 
 
@@ -56,7 +56,7 @@ class DistributeAddition(IntegrationStrategy):
   @classmethod
   def applicable(self, intg):
     exp = intg.simplified().exp
-    return isinstance(expr, Sum)
+    return isinstance(exp, Sum)
 
   @classmethod
   def apply(self, intg):
