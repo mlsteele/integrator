@@ -1,3 +1,5 @@
+import string
+
 class Expression(object):
   def __init__(self):
     raise Exception("Expression is an abstract class")
@@ -25,6 +27,9 @@ class Number(Expression):
 
 # unique set of variables
 class VariableSet(object):
+  SYMBOLS = set(string.letters)
+  MAX_VARIABLES = len(SYMBOLS)
+
   def __init__(self):
     self.lookup = {}
 
@@ -39,8 +44,11 @@ class VariableSet(object):
     return v
 
   def unused_symbol(self):
-    # TODO fix
-    return 'BADVAR'
+    used = set(map(lambda (var, sym): sym, self.lookup.items()))
+    unused = self.SYMBOLS - used
+    if len(unused) == 0:
+      raise Exception("VariableSet out of symbols")
+    return unused.pop()
 
   def symbol_for(self, var):
     return self.lookup[var]
@@ -120,4 +128,4 @@ class Integral(Expression):
     return Integral(self.exp.simplified(), self.var)
 
   def __repr__(self):
-    return "int[%s]d%s" %(self.exp, self.var.symbol)
+    return "int[%s]d%s" %(self.exp, self.var)

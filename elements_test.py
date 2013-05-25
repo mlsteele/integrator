@@ -31,6 +31,17 @@ def test_Variable():
   assert_equal(v1.simplified().symbol(), 'x')
   assert_equal(v1.simplified(), v1)
 
+def test_VariableSet():
+  vset = VariableSet()
+  va = vset.new_variable('a')
+  vb = vset.new_variable('b')
+  assert_equal(VariableSet.MAX_VARIABLES > 3, True)
+  vs = [vset.new_variable() for _ in range(VariableSet.MAX_VARIABLES - 2)]
+  assert_equal(va.symbol(), 'a')
+  assert_equal(vb.symbol(), 'b')
+  symbols = ['a', 'b'] + [v.symbol() for v in vs]
+  assert_equal(len(set(symbols)), len(symbols))
+
 
 def test_Sum():
   x = Number(3)
@@ -97,9 +108,10 @@ def test_Power():
   assert_equal(p.simplified().n, 614.125)
 
 if __name__ == "__main__":
-  do_test(test_Expression, "Expression")
-  do_test(test_Number,     "Number")
-  do_test(test_Variable,   "Variable")
-  do_test(test_Sum,        "Sum")
-  do_test(test_Product,    "Product")
-  do_test(test_Power,      "Power")
+  do_test(test_Expression,  "Expression")
+  do_test(test_Number,      "Number")
+  do_test(test_Variable,    "Variable")
+  do_test(test_VariableSet, "VariableSet")
+  do_test(test_Sum,         "Sum")
+  do_test(test_Product,     "Product")
+  do_test(test_Power,       "Power")
