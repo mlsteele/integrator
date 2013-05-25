@@ -9,7 +9,7 @@ class IntegrationStrategy(object):
 
 
 # int 4 dx = 4x + C
-class Constant(IntegrationStrategy):
+class ConstantTerm(IntegrationStrategy):
   @classmethod
   def applicable(self, intg):
     exp = intg.simplified().exp
@@ -17,7 +17,8 @@ class Constant(IntegrationStrategy):
 
   @classmethod
   def apply(self, intg):
-    return Product(intg.exp, intg.var)
+    intg_const = intg.var.vset.new_variable()
+    return Sum(Product(intg.exp, intg.var), intg_const)
 
 
 # int 4x dx = 4 * int x dx
