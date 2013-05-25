@@ -26,20 +26,21 @@ def test_Number():
 
 def test_Variable():
   vset = VariableSet()
-  v1 = vset.new_variable('x')
+  v1 = vset.variable('x')
   assert_equal(v1.symbol(), 'x')
   assert_equal(v1.simplified().symbol(), 'x')
   assert_equal(v1.simplified(), v1)
 
 def test_VariableSet():
   vset = VariableSet()
-  va = vset.new_variable('a')
-  vb = vset.new_variable('b')
+  va = vset.variable('a')
+  vb = vset.variable('b')
+  vuk = vset.variable()
   assert_equal(VariableSet.MAX_VARIABLES > 3, True)
-  vs = [vset.new_variable() for _ in range(VariableSet.MAX_VARIABLES - 2)]
+  vs = [vset.variable() for _ in range(VariableSet.MAX_VARIABLES - 3)]
   assert_equal(va.symbol(), 'a')
   assert_equal(vb.symbol(), 'b')
-  symbols = ['a', 'b'] + [v.symbol() for v in vs]
+  symbols = ['a', 'b', vuk.symbol()] + [v.symbol() for v in vs]
   assert_equal(len(set(symbols)), len(symbols))
 
 
@@ -52,7 +53,7 @@ def test_Sum():
   assert_equal(y.n, 6)
 
   vset = VariableSet()
-  x = vset.new_variable('x')
+  x = vset.variable('x')
   y = Number(6)
   s = Sum(x,y)
   assert_equal(s.simplified().a.symbol(), 'x')
@@ -73,7 +74,7 @@ def test_Product():
   assert_equal(y.n, 6)
 
   vset = VariableSet()
-  x = vset.new_variable('x')
+  x = vset.variable('x')
   y = Number(6)
   s = Product(x,y)
   assert_equal(s.simplified().a.symbol(), 'x')

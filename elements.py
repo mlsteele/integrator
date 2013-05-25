@@ -34,14 +34,26 @@ class VariableSet(object):
     self.lookup = {}
 
   def new_variable(self, symbol=None):
-    if symbol in self.lookup.keys():
-      raise ValueError('symbol "' + symbol + '" already used in VariableSet')
     if symbol == None:
       symbol = self.unused_symbol()
+    if not symbol in self.SYMBOLS:
+      raise ValueError('symbol "' + str(symbol) + '" not in SYMBOLS')
+    elif symbol in self.lookup.keys():
+      raise ValueError('symbol "' + str(symbol) + '" already used in VariableSet')
 
     v = Variable(self)
     self.lookup[v] = symbol
     return v
+
+  def variable(self, symbol=None):
+    if symbol == None:
+      return self.new_variable()
+    elif not symbol in self.SYMBOLS:
+      raise ValueError('symbol "' + symbol + '" not in SYMBOLS')
+    elif symbol in map(lambda (var, sym): sym, self.lookup.items()):
+      return filter(lambda (var, sym): sym == symbol, self.lookup.items())[0][0]
+    else:
+      return self.new_variable(symbol)
 
   def unused_symbol(self):
     used = set(map(lambda (var, sym): sym, self.lookup.items()))
@@ -54,7 +66,7 @@ class VariableSet(object):
     return self.lookup[var]
 
 
-# do not instantiate this class, use variableset.new_variable(optional_symbol)
+# do not instantiate this class, use variableset.variable(optional_symbol)
 class Variable(Expression):
   def __init__(self, vset):
     if not isinstance(vset, VariableSet):

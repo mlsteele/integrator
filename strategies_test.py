@@ -13,7 +13,7 @@ def test_IntegrationStrategy():
 
 def test_ConstantTerm():
   vset = VariableSet()
-  var = vset.new_variable()
+  var = vset.variable()
   exp = Number(4)
   intg = Integral(exp, var)
   assert_equal(ConstantTerm.applicable(intg), True)
@@ -23,7 +23,7 @@ def test_ConstantTerm():
   assert_equal(isinstance(res.b, Variable), True)
 
   vset = VariableSet()
-  var = vset.new_variable()
+  var = vset.variable()
   exp = Product(Number(3), Number(4))
   intg = Integral(exp, var)
   assert_equal(ConstantTerm.applicable(intg), True)
@@ -33,16 +33,16 @@ def test_ConstantTerm():
   assert_equal(isinstance(res.b, Variable), True)
 
   vset = VariableSet()
-  var = vset.new_variable()
-  exp = Product(vset.new_variable(), Number(4))
+  var = vset.variable()
+  exp = Product(vset.variable(), Number(4))
   intg = Integral(exp, var)
   assert_equal(ConstantTerm.applicable(intg), False)
 
 
 def test_DistributeAddition():
   vset = VariableSet()
-  var = vset.new_variable()
-  exp = Sum(Number(4), vset.new_variable('y'))
+  var = vset.variable()
+  exp = Sum(Number(4), vset.variable('y'))
   intg = Integral(exp, var)
   assert_equal(DistributeAddition.applicable(intg), True)
   res = DistributeAddition.apply(intg)
@@ -55,14 +55,14 @@ def test_DistributeAddition():
 
 def test_NumberExponent():
   vset = VariableSet()
-  var = vset.new_variable()
-  var2 = vset.new_variable()
+  var = vset.variable()
+  var2 = vset.variable()
   exp = Power(var, Number(2))
   intg = Integral(exp, var2)
   assert_equal(NumberExponent.applicable(intg), False)
 
   vset = VariableSet()
-  var = vset.new_variable()
+  var = vset.variable()
   exp = Power(var, Number(2))
   intg = Integral(exp, var)
   assert_equal(NumberExponent.applicable(intg), True)
