@@ -1,68 +1,97 @@
-import string
 from elements import *
 
+BIN_OPS = ['*', '+', '/', '-']
+PARENS = [['(', ')'], ['[', ']']]
+OPERATORS = ["*", "+", "/", "-","(",")","[","]"]
 
-def parse(s): #Single letter only, e.g. 5x allowed but not 4cat
-  letters = string.lowercase + string.uppercase
-  digits = string.digits
-  keys = ["*", "+", "/", "-","(",")","[","]"]
+class ParseError(Exception): pass
 
-  ############
-
+def tokenize(s):
   noSpaces = s.replace(" ","")
-  length = len(noSpaces)
 
-  lastInd = 0 #Last measured index of a key
+  lastInd = 0 # last measured index of a key
   splitStrings = []
-  
-  for ind in range(length):
-    if noSpaces[ind] in keys:
+
+  for ind in range(len(noSpaces)):
+    if noSpaces[ind] in OPERATORS:
       splitStrings += [noSpaces[lastInd:ind], noSpaces[ind:ind+1]]
       lastInd = ind + 1
 
   splitStrings += [noSpaces[lastInd:]]
   splitStrings = [e for e in splitStrings if e != ""]
 
-  finalList = []
-      
-  lenSplitStrings = len(splitStrings)
-  for splitWord in splitStrings:
-    if splitWord[-1] in letters and splitWord[:-1] in digits: #e.g. 22x
-      finalList.append(Product(Number(float(splitWord[:-1])), Variable(splitWord[-1])))
-    elif splitWord in keys:
-      finalList.append(splitWord)
-    elif splitWord in letters:
-      finalList.append(Variable(splitWord))
+  return splitStrings
+
+def parse_tokens(tokens):
+  zip3 = lambda l: zip(l, l[1:], l[2:])
+
+  def scan_binops(binops, tokens):
+    while len(set(binops.keys()).intersection(set(tokens))) > 0:
+      first_index = (i for i,v in enumerate(tokens) if v in binops.keys()).next()
+      l,t,r = tokens[first_index - 1], tokens[first_index], tokens[first_index + 1]
+
+      if isinstance(l, str) or isinstance(r, str):
+        raise ParseError("parse error: left or right of binop is a string\n    l: %s\n    r: %s" %(l,r))
+
+      new_token = binops[t](l,t,r)
+      tokens = tokens[0:first_index - 1] + [new_token] + tokens[first_index + 2:]
+    return tokens
+
+  # # # #
+
+  vset = VariableSet()
+
+  # variables
+  def variables(token):
+    if token in vset.SYMBOLS:
+      return vset.variable(token)
     else:
-      finalList.append(Number(float(splitWord)))
+      return token
+  tokens = [variables(t) for t in tokens]
 
-  return fixify(finalList)
-  
-def fixify(wordList):
-  #Do parens
-  #then mults
-  #then adds
-  l = len(wordList)
+  # numbers
+  def numbers(token):
+    # TODO floats?
+    if token.isdigit():
+      return Number(float(token))
+    else:
+      return token
+  tokens = [numbers(t) for t in tokens]
 
-  #Finds parens for paren evaluations:
-  parenInds = (0,0)
-  for wordInd in range(l):
-    if wordList[wordInd] == "(" or wordList[wordInd] == "[":
-      for wordRevInd in range(l - 1, 0, -1):
-        if wordList[wordRevInd] == ")" or wordList[wordRevInd] == ")":
-          parenInds = (wordInd, l - 1 - wordRevInd)
-    else: #No parens left
-      pass #?
+  # TODO parens
 
-  parensEvald = fixify(wordList[parenInds[0]:parenInds[1]]) #Not sure what to do with this yet
 
-  #Find a binary mult, left to right:
-  for wordInd in range(l):
-    if wordInd == "*":
-      multEvald = fixify(wordList[wordInd - 1:wordInd + 2])
+  # multiplication
+  # TODO division
+  binops = {
+    '*': lambda l,t,r: Product(l, r) }
+    # '-': lambda l,t,r: Sum(l, Product(Number(-1), r)) }
+  tokens = scan_binops(binops, tokens)
 
-  #Miles you can figure out the rest
-        
-  
-print parse("(3x + 53)*24")
+  # addition
+  binops = {
+    '+': lambda l,t,r: Sum(l, r) ,
+    '-': lambda l,t,r: Sum(l, Product(Number(-1), r)) }
+  tokens = scan_binops(binops, tokens)
 
+  # TODO integration
+
+  # check for unparsed tokens
+  for t in tokens:
+    if isinstance(t, str):
+      raise ParseError("parse error: unparsed token '%s'" %t)
+
+  if len(tokens) != 1:
+    raise ParseError("parse error: resultant tokens length is not 1 (%s)" %len(tokens))
+
+  return tokens[0]
+
+
+# s = "(3x + 53)*24"
+s = "2 + 3 * 5"
+print s
+print parse_tokens(tokenize(s))
+print parse_tokens(tokenize(s)).simplified()
+
+a = [1,2,'+',3,'+',4,5,6,7,'*',8,10]
+# print a
