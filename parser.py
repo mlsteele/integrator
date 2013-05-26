@@ -22,7 +22,7 @@ def tokenize(s):
 
   return splitStrings
 
-def parse_tokens(tokens):
+def parse_tokens(tokens, vset=None, debug=False):
   zip3 = lambda l: zip(l, l[1:], l[2:])
 
   # scan left to right and apply binary expressions
@@ -66,21 +66,24 @@ def parse_tokens(tokens):
       left_tokens  = tokens[: split_left_index]
       inner_tokens = tokens[split_left_index + 1 : split_right_index]
       right_tokens = tokens[split_right_index + 1 :]
-      print "left_tokens : %s" % str(left_tokens)
-      print "inner_tokens: %s" % str(inner_tokens)
-      print "right_tokens: %s" % str(right_tokens)
+      # if debug: print "left_tokens : %s" % str(left_tokens)
+      # if debug: print "inner_tokens: %s" % str(inner_tokens)
+      # if debug: print "right_tokens: %s" % str(right_tokens)
 
       new_token = parse_tokens(inner_tokens)
-      print "new_token: %s" % str(new_token)
+      # if debug: print "new_token: %s" % str(new_token)
       tokens = left_tokens + [new_token] + right_tokens
 
     return tokens
 
   # # # #
 
-  print "parsing tokens: %s" % str(tokens)
+  if debug: print "parsing tokens: %s" % str(tokens)
 
-  vset = VariableSet()
+  if vset == None:
+    vset = VariableSet()
+  if not isinstance(vset, VariableSet):
+    raise ValueError('vset is not instance of VariableSet')
 
   # variables
   def variables(token):
@@ -131,7 +134,7 @@ def parse_tokens(tokens):
 # s = "(3x + 53)*24"
 s = "((2 + 3) * 5)"
 print s
-p = parse_tokens(tokenize(s))
+p = parse_tokens(tokenize(s), debug=True)
 print p
 print p.simplified()
 
