@@ -8,8 +8,11 @@ def test_tokenize():
 
   assert_equal(tokenize('ab'), list('a*b'))
   assert_equal(tokenize('a*b'), list('a*b'))
+  assert_equal(tokenize('a^b'), list('a^b'))
   assert_equal(tokenize('a * b'), list('a*b'))
+  assert_equal(tokenize('a ^ b'), list('a^b'))
   assert_equal(tokenize('a * (b)'), list('a*(b)'))
+  assert_equal(tokenize('a ^ (b)'), list('a^(b)'))
   assert_equal(tokenize('a(b)'), list('a*(b)'))
 
   assert_equal(tokenize('a(b)d'), list('a*(b)*d'))

@@ -2,7 +2,7 @@ import re
 from elements import *
 
 # TODO condense these constants
-BIN_OPS = ['*', '+', '/', '-']
+BIN_OPS = ['*', '+', '/', '-', '^']
 INTG_START = 'int'
 PARENS = [['(', ')'], ['[', ']']]
 PARENS_FLAT = ['(', ')', '[', ']']
@@ -35,6 +35,13 @@ def tokenize(s):
       character_stream = character_stream[2:]
       continue
 
+
+    def default(char):
+      if isnum(char) or char in VariableSet.SYMBOLS.union(set(BIN_OPS), set(PARENS_FLAT)):
+        tokens.append(char)
+      else:
+        raise ParseError("uknown char to tokenize: %s" %char)
+
     # catch spaces
     if char == ' ':
       pass
@@ -46,26 +53,26 @@ def tokenize(s):
       elif char in VariableSet.SYMBOLS or char in PARENS_LEFT:
         tokens += ['*', char]
       else:
-        tokens.append(char)
+        default(char)
     elif tokens[-1] in VariableSet.SYMBOLS:
       # symbol -> (symbol | number | left paren)
       if char in VariableSet.SYMBOLS or isnum(char) or char in PARENS_LEFT:
         tokens += ['*', char]
       else:
-        tokens.append(char)
+        default(char)
     elif tokens[-1] in PARENS_RIGHT:
       if char in PARENS_LEFT or char in VariableSet.SYMBOLS or isnum(char):
         tokens += ['*', char]
       else:
-        tokens.append(char)
+        default(char)
     elif tokens[-1] in PARENS_LEFT:
       # paren -> paren
       if char in PARENS_FLAT:
         tokens += ['*', char]
       else:
-        tokens.append(char)
+        default(char)
     else:
-      tokens.append(char)
+      default(char)
 
     # advance character stream
     character_stream = character_stream[1:]
@@ -186,12 +193,17 @@ def parse_tokens(tokens, vset=None, debug=False):
   if debug: print "    parsing parens"
   tokens = scan_groups(tokens, vset, '(', ')')
 
+  # power
+  if debug: print "    parsing powers"
+  binops = {
+    '^': lambda l,t,r: Power(l, r) }
+  tokens = scan_binops(tokens, binops)
+
   # multiplication
   # TODO division
   if debug: print "    parsing multiplication"
   binops = {
     '*': lambda l,t,r: Product(l, r) }
-    # '-': lambda l,t,r: Sum(l, Product(Number(-1), r)) }
   tokens = scan_binops(tokens, binops)
 
   # addition, subtraction
@@ -226,16 +238,23 @@ if __name__ == "__main__":
 
   # a = [1,2,'+',3,'+',4,5,6,7,'*',8,10]
 
-  # s = 'int x dx'
-  s = 'int 2*2x dx'
+  # s = 'int 2*2x dx'
+  # print "string: %s" %s
+  # ts = tokenize(s)
+  # print "tokens: %s" %ts
+  # p = parse_tokens(ts)
+  # print "parsed: %s" %p
+  # print "simplified: %s" %p.simplified()
+  # from strategies import *
+  # print ConstantFactor.applicable(p)
+  # x = ConstantFactor.apply(p)
+  # print x
+  # print 
+
+  s = '2^3'
   print "string: %s" %s
   ts = tokenize(s)
   print "tokens: %s" %ts
   p = parse_tokens(ts)
   print "parsed: %s" %p
   print "simplified: %s" %p.simplified()
-  from strategies import *
-  print ConstantFactor.applicable(p)
-  x = ConstantFactor.apply(p)
-  print x
-  print 
