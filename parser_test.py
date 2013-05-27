@@ -27,6 +27,9 @@ def test_tokenize():
   assert_equal(tokenize('int (2) + 3x * 8 dx'), ['int', '(', '2', ')', '+', '3', '*', 'x', '*', '8', 'dx'])
   assert_equal(tokenize('int (2) + 3w * 8 dz'), ['int', '(', '2', ')', '+', '3', '*', 'w', '*', '8', 'dz'])
 
+def test_parser():
+  assert_equal('NO', 'TESTS')
 
 if __name__ == "__main__":
-  do_test(test_tokenize,  "tokenize")
+  do_test(test_tokenize, "tokenize")
+  do_test(test_parser,   "parser")

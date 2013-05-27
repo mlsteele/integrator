@@ -90,10 +90,9 @@ def parse_tokens(tokens, vset=None, debug=False):
       tokens = tokens[0:first_index - 1] + [new_token] + tokens[first_index + 2:]
     return tokens
 
-  # scan left to right and grouping operators (like parens)
-  def scan_groups(tokens, split_l, split_r):
+  # scan left to right and grouping operators e.g. parens
+  def scan_groups(tokens, vset, split_l, split_r):
     # while there are both left and right splitters in tokens
-    # while len(set([split_l, split_r]).intersection(set(tokens))) == 2:
     while split_l in tokens and split_r in tokens:
       split_left_index = (i for i,v in enumerate(tokens) if v in [split_l]).next()
 
@@ -121,8 +120,35 @@ def parse_tokens(tokens, vset=None, debug=False):
       if debug: print "inner_tokens: %s" % str(inner_tokens)
       if debug: print "right_tokens: %s" % str(right_tokens)
 
+      new_token = parse_tokens(inner_tokens, vset=vset, debug=debug)
+      if debug: print "new_token: %s" % str(new_token)
+      tokens = left_tokens + [new_token] + right_tokens
 
-      new_token = parse_tokens(inner_tokens, debug=debug)
+    return tokens
+
+  # modified scan_groups for integrals (no nested counting, 'dx' variable capture)
+  def scan_integrals(tokens, vset):
+    while INTG_START in tokens:
+      split_left_index = (i for i,v in enumerate(tokens) if v == INTG_START).next()
+
+      # find matching splitter
+      is_right_split = lambda t: isinstance(t,str) and t[0] == 'd' and t[1:] in VariableSet.SYMBOLS
+      split_right_index = split_left_index + (i for i,v in enumerate(tokens[split_left_index:]) if is_right_split(v)).next()
+
+      if split_right_index > len(tokens):
+        raise ParseError('unmatched integral start')
+
+      # break tokens into parts
+      left_tokens  = tokens[: split_left_index]
+      inner_tokens = tokens[split_left_index + 1 : split_right_index]
+      right_tokens = tokens[split_right_index + 1 :]
+      if debug: print "left_tokens : %s" % str(left_tokens)
+      if debug: print "inner_tokens: %s" % str(inner_tokens)
+      if debug: print "right_tokens: %s" % str(right_tokens)
+
+      new_inner_token = parse_tokens(inner_tokens, vset=vset, debug=debug)
+      intg_var = vset.variable(tokens[split_right_index][1:])
+      new_token = Integral(new_inner_token, intg_var)
       if debug: print "new_token: %s" % str(new_token)
       tokens = left_tokens + [new_token] + right_tokens
 
@@ -158,7 +184,7 @@ def parse_tokens(tokens, vset=None, debug=False):
 
   # parens
   if debug: print "    parsing parens"
-  tokens = scan_groups(tokens, '(', ')')
+  tokens = scan_groups(tokens, vset, '(', ')')
 
   # multiplication
   # TODO division
@@ -176,6 +202,7 @@ def parse_tokens(tokens, vset=None, debug=False):
   tokens = scan_binops(tokens, binops)
 
   # TODO integration
+  tokens = scan_integrals(tokens, vset)
 
   # check for unparsed tokens
   for t in tokens:
@@ -199,6 +226,16 @@ if __name__ == "__main__":
 
   # a = [1,2,'+',3,'+',4,5,6,7,'*',8,10]
 
-  s = 'int'
+  # s = 'int x dx'
+  s = 'int 2*2x dx'
+  print "string: %s" %s
   ts = tokenize(s)
-  print ts
+  print "tokens: %s" %ts
+  p = parse_tokens(ts)
+  print "parsed: %s" %p
+  print "simplified: %s" %p.simplified()
+  from strategies import *
+  print ConstantFactor.applicable(p)
+  x = ConstantFactor.apply(p)
+  print x
+  print 
