@@ -1,7 +1,9 @@
+import re
 from elements import *
 
 # TODO condense these constants
 BIN_OPS = ['*', '+', '/', '-']
+INTG_START = 'int'
 PARENS = [['(', ')'], ['[', ']']]
 PARENS_FLAT = ['(', ')', '[', ']']
 PARENS_LEFT  = ['(', '[']
@@ -11,19 +13,28 @@ OPERATORS = ["*", "+", "/", "-","(",")","[","]"]
 class ParseError(Exception): pass
 
 def tokenize(s):
-  def isnum(s): return s.isdigit() or s == '.'
+  def isnum(s): return bool(re.match('\d*\.?\d*$', s))
 
   character_stream = list(s)
-  tokens = []
+  tokens = [' '] # initial space eases logic edge cases
 
-  tokens.append(character_stream[0])
-  character_stream = character_stream[1:]
-
+  # process chars into tokens
   while len(character_stream) > 0:
     char = character_stream[0]
-    character_stream = character_stream[1:]
 
-    # process char into tokens
+    # recue integrals starts
+    # WARN: this section advances on its own and then continues to a new state of the loop
+    if character_stream[0:len(INTG_START)] == list(INTG_START):
+      tokens.append(INTG_START)
+      # advance character stream an EXTRA 2 notches
+      character_stream = character_stream[len(INTG_START):]
+      continue
+    # catch integral stops
+    if character_stream[0] == 'd' and len(character_stream) >= 2 and character_stream[1] in VariableSet.SYMBOLS:
+      tokens.append('d' + character_stream[1])
+      character_stream = character_stream[2:]
+      continue
+
     # catch spaces
     if char == ' ':
       pass
@@ -37,8 +48,8 @@ def tokenize(s):
       else:
         tokens.append(char)
     elif tokens[-1] in VariableSet.SYMBOLS:
-      # symbol -> symbol
-      if char in VariableSet.SYMBOLS:
+      # symbol -> (symbol | number | left paren)
+      if char in VariableSet.SYMBOLS or isnum(char) or char in PARENS_LEFT:
         tokens += ['*', char]
       else:
         tokens.append(char)
@@ -56,10 +67,11 @@ def tokenize(s):
     else:
       tokens.append(char)
 
-  # remove spaces
-  tokens = filter(lambda t: t != ' ', tokens)
+    # advance character stream
+    character_stream = character_stream[1:]
 
-  return tokens
+  return tokens[1:] # remove initial space
+
 
 def parse_tokens(tokens, vset=None, debug=False):
   zip3 = lambda l: zip(l, l[1:], l[2:])
@@ -176,15 +188,17 @@ def parse_tokens(tokens, vset=None, debug=False):
   return tokens[0]
 
 
-# s = "(3x + 53)*24"
-# s = "((2 + 3) * 5h) * (3 + f)"
-s = "2(2)2(22)2"
-print s
-ts = tokenize(s)
-print "tokens: %s" % ts
-p = parse_tokens(ts, debug=False)
-print p
-print p.simplified()
+if __name__ == "__main__":
+  # s = "a(2)"
+  # print s
+  # ts = tokenize(s)
+  # print "tokens: %s" % ts
+  # p = parse_tokens(ts, debug=False)
+  # print p
+  # print p.simplified()
 
-a = [1,2,'+',3,'+',4,5,6,7,'*',8,10]
-# print a
+  # a = [1,2,'+',3,'+',4,5,6,7,'*',8,10]
+
+  s = 'int'
+  ts = tokenize(s)
+  print ts
