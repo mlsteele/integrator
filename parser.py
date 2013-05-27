@@ -4,8 +4,8 @@ from elements import *
 BIN_OPS = ['*', '+', '/', '-']
 PARENS = [['(', ')'], ['[', ']']]
 PARENS_FLAT = ['(', ')', '[', ']']
-LEFT_PARENS  = ['(', '[']
-RIGHT_PARENS = [')', ']']
+PARENS_LEFT  = ['(', '[']
+PARENS_RIGHT = [')', ']']
 OPERATORS = ["*", "+", "/", "-","(",")","[","]"]
 
 class ParseError(Exception): pass
@@ -31,8 +31,8 @@ def tokenize(s):
       # number -> number
       if isnum(char):
         tokens[-1] += char
-      # number -> symbol
-      if char in VariableSet.SYMBOLS:
+      # number -> (symbol | left paren)
+      elif char in VariableSet.SYMBOLS or char in PARENS_LEFT:
         tokens += ['*', char]
       else:
         tokens.append(char)
@@ -42,7 +42,12 @@ def tokenize(s):
         tokens += ['*', char]
       else:
         tokens.append(char)
-    elif tokens[-1] in PARENS_FLAT:
+    elif tokens[-1] in PARENS_RIGHT:
+      if char in PARENS_LEFT or char in VariableSet.SYMBOLS or isnum(char):
+        tokens += ['*', char]
+      else:
+        tokens.append(char)
+    elif tokens[-1] in PARENS_LEFT:
       # paren -> paren
       if char in PARENS_FLAT:
         tokens += ['*', char]
@@ -173,7 +178,7 @@ def parse_tokens(tokens, vset=None, debug=False):
 
 # s = "(3x + 53)*24"
 # s = "((2 + 3) * 5h) * (3 + f)"
-s = "(3)(2a)"
+s = "2(2)2(22)2"
 print s
 ts = tokenize(s)
 print "tokens: %s" % ts
