@@ -81,6 +81,35 @@ def test_Product():
   assert_equal(s.simplified().b.n, 6)
 
 
+def test_Fraction():
+  x = Number(3)
+  y = Number(6)
+  s = Fraction(x,y)
+  assert_equal(isinstance(s.simplified(), Fraction), True)
+  assert_equal(s.simplified().numr, 1)
+  assert_equal(s.simplified().denr, 2)
+  assert_equal(x.n, 3)
+  assert_equal(y.n, 6)
+
+  vset = VariableSet()
+  x = vset.variable()
+  y = Sum(Product(Number(3), Number(5)), Number(2))
+  s = Fraction(x,y)
+  assert_equal(isinstance(s.simplified(), Fraction), True)
+  assert_equal(isinstance(s.simplified().numr, Variable), True)
+  assert_equal(isinstance(s.simplified().denr, Number), True)
+  assert_equal(s.simplified().denr.n, 17)
+
+  vset = VariableSet()
+  x = Sum(Product(Number(3), Number(5)), Number(2))
+  y = vset.variable()
+  s = Fraction(x,y)
+  assert_equal(isinstance(s.simplified(), Fraction), True)
+  assert_equal(isinstance(s.simplified().denr, Variable), True)
+  assert_equal(isinstance(s.simplified().numr, Number), True)
+  assert_equal(s.simplified().numr.n, 17)
+
+
 def test_Integral():
   exp = Number(5)
   intg = Integral(exp, 'x')
@@ -115,4 +144,5 @@ if __name__ == "__main__":
   do_test(test_VariableSet, "VariableSet")
   do_test(test_Sum,         "Sum")
   do_test(test_Product,     "Product")
+  do_test(test_Fraction,    "Fraction")
   do_test(test_Power,       "Power")

@@ -1,4 +1,5 @@
 import string
+from fractions import gcd
 
 class Expression(object):
   def __init__(self):
@@ -17,13 +18,6 @@ class Number(Expression):
 
   def __repr__(self):
     return str(self.n)
-
-
-# class Fraction(Expression):
-#   def __init__(self, numerator, denominator):
-#     self.numerator   = numerator
-#     self.denominator = numerator
-
 
 # unique set of variables
 class VariableSet(object):
@@ -109,6 +103,24 @@ class Product(Expression):
       return Number(a.n * b.n)
     else:
       return Product(a, b)
+
+  def __repr__(self):
+    return "(%s * %s)" %(self.a, self.b)
+
+
+class Fraction(Expression):
+  def __init__(self, numr, denr):
+    self.numr = numr
+    self.denr = denr
+
+  def simplified(self):
+    numr = self.numr.simplified()
+    denr = self.denr.simplified()
+    if isinstance(numr, Number) and isinstance(denr, Number):
+      gcd_ = gcd(numr.n, denr.n)
+      return Fraction(numr.n / gcd_, denr.n / gcd_)
+    else:
+      return Fraction(numr, denr)
 
   def __repr__(self):
     return "(%s * %s)" %(self.a, self.b)

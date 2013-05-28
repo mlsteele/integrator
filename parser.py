@@ -227,6 +227,9 @@ def parse_tokens(tokens, vset=None, debug=False):
   return tokens[0]
 
 
+def parse(s, vset=None, debug=False):
+  return parse_tokens(tokenize(s), vset=vset, debug=debug)
+
 if __name__ == "__main__":
   # s = "a(2)"
   # print s
