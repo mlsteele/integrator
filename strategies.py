@@ -10,6 +10,8 @@ class IntegrationStrategy(object):
 
 # int 4 dx = 4x + C
 class ConstantTerm(IntegrationStrategy):
+  description = "integral of a constant term"
+
   @classmethod
   def applicable(self, intg):
     exp = intg.simplified().exp
@@ -23,6 +25,7 @@ class ConstantTerm(IntegrationStrategy):
 
 # int 4x dx = 4 * int x dx
 class ConstantFactor(IntegrationStrategy):
+  description = "integral with a constant factor"
   @classmethod
   def applicable(self, intg):
     exp = intg.simplified().exp
@@ -37,6 +40,8 @@ class ConstantFactor(IntegrationStrategy):
 
 # int x^3 dx = 1/4 x^4 + C
 class NumberExponent(IntegrationStrategy):
+  description = "integral with a numerical exponent"
+
   @classmethod
   def applicable(self, intg):
     expr = intg.simplified().exp
@@ -53,6 +58,8 @@ class NumberExponent(IntegrationStrategy):
 
 # int x + x^2 dx = int x dx + int x^2 dx
 class DistributeAddition(IntegrationStrategy):
+  description = "integral of sums to sum of integrals"
+
   @classmethod
   def applicable(self, intg):
     exp = intg.simplified().exp
@@ -62,3 +69,5 @@ class DistributeAddition(IntegrationStrategy):
   def apply(self, intg):
     exp = intg.simplified().exp
     return Sum(Integral(exp.a, intg.var), Integral(exp.b, intg.var))
+
+STRATEGIES = [ConstantTerm, ConstantFactor, NumberExponent, DistributeAddition]
