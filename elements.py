@@ -5,6 +5,9 @@ class Expression(object):
   def __init__(self):
     raise Exception("Expression is an abstract class")
 
+  def reciprocal(self):
+    return Fraction(Number(1), self)
+
   def simplified(self):
     return self
 
@@ -18,6 +21,7 @@ class Number(Expression):
 
   def __repr__(self):
     return str(self.n)
+
 
 # unique set of variables
 class VariableSet(object):
@@ -113,6 +117,9 @@ class Fraction(Expression):
     self.numr = numr
     self.denr = denr
 
+  def reciprocal(self):
+    return Fraction(self.denr, self.numr)
+
   def simplified(self):
     numr = self.numr.simplified()
     denr = self.denr.simplified()
@@ -123,7 +130,7 @@ class Fraction(Expression):
       return Fraction(numr, denr)
 
   def __repr__(self):
-    return "(%s * %s)" %(self.a, self.b)
+    return "(%s / %s)" %(self.numr, self.denr)
 
 
 class Power(Expression):

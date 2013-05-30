@@ -1,5 +1,9 @@
 from elements import *
 
+def _add_constant(expr, vset):
+  return Sum(expr, vset.new_variable(suggest='C'))
+
+
 class IntegrationStrategy(object):
   def __init__(self):
     raise "Strategy is an abstract class"
@@ -38,6 +42,22 @@ class ConstantFactor(IntegrationStrategy):
     return Product(constant_factor, Integral(integrand, intg.var))
 
 
+# int x dx = 1/2 x^2 + C
+class SimpleIntegral(IntegrationStrategy):
+  description = "integral with a power of 1"
+
+  @classmethod
+  def applicable(self, intg):
+    expr = intg.simplified().exp
+    return isinstance(expr, Variable)
+
+  @classmethod
+  def apply(self, intg):
+    expr = intg.simplified().exp
+    half = Fraction(Number(1), Number(2))
+    return Product(half, Power(expr, Number(2)))
+
+
 # int x^3 dx = 1/4 x^4 + C
 class NumberExponent(IntegrationStrategy):
   description = "integral with a numerical exponent"
@@ -52,7 +72,7 @@ class NumberExponent(IntegrationStrategy):
     expr = intg.simplified().exp
     # TODO do not use floating point reciprocal!!!
     n_plus_one = Sum(expr.exponent, Number(1)).simplified()
-    recip_n = Number(1 / float(n_plus_one.n))
+    recip_n = n_plus_one.reciprocal()
     return Product(recip_n, Power(intg.var, n_plus_one))
 
 
@@ -70,4 +90,4 @@ class DistributeAddition(IntegrationStrategy):
     exp = intg.simplified().exp
     return Sum(Integral(exp.a, intg.var), Integral(exp.b, intg.var))
 
-STRATEGIES = [ConstantTerm, ConstantFactor, NumberExponent, DistributeAddition]
+STRATEGIES = [ConstantTerm, ConstantFactor, SimpleIntegral, NumberExponent, DistributeAddition]

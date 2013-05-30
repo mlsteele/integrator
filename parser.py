@@ -204,6 +204,7 @@ def parse_tokens(tokens, vset=None, debug=False):
   if debug: print "    parsing multiplication"
   binops = {
     '*': lambda l,t,r: Product(l, r) }
+    # '/': lambda l,t,r: Fraction(l, r) }
   tokens = scan_binops(tokens, binops)
 
   # addition, subtraction
