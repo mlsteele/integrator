@@ -29,31 +29,62 @@ class VariableSet(object):
   MAX_VARIABLES = len(SYMBOLS)
 
   def __init__(self):
-    self.lookup = {}
+    self.lookup = {} # hash of {Variable instance: symbol string}`
 
-  def new_variable(self, symbol=None):
+  # fetch or create a variable with symbol=symbol
+  # if symbol=None then create a new variable
+  def variable(self, symbol=None):
     if symbol == None:
-      symbol = self.unused_symbol()
-    if not symbol in self.SYMBOLS:
-      raise ValueError('symbol "' + str(symbol) + '" not in SYMBOLS')
-    elif symbol in self.lookup.keys():
-      raise ValueError('symbol "' + str(symbol) + '" already used in VariableSet')
+      return self.new_variable()
+    else:
+      existing = self.variable_for(symbol)
+      if existing != None:
+        return existing
+      else:
+        return self.new_variable(symbol=symbol)
+
+  # force creation of new variable
+  # only one of symbol or suggest is allowed
+  # if symbol then new variable will be created with symbol=symbol
+  # if suggest then a new variable will be created, and if possible it will have symbol=suggest
+  def new_variable(self, symbol=None, suggest=None):
+    if symbol != None and suggest != None:
+      return ValueError('only one of symbol and suggest is allowed, both supplied (symbol=%s, suggest=%s)' %(symbol, suggest))
+    elif symbol != None:
+      return self._new_variable(symbol)
+    elif suggest != None:
+      if self.variable_for(suggest) == None:
+        return self._new_variable(suggest)
+      else:
+        return self._new_variable()
+    else:
+      return self._new_variable()
+
+  # create a new variable with an unused symbol
+  def _new_variable(self, symbol=None):
+    if symbol != None:
+      self._check_symbol_valid_new(symbol)
+    else:
+      symbol = self._unused_symbol()
 
     v = Variable(self)
     self.lookup[v] = symbol
     return v
 
-  def variable(self, symbol=None):
+  # throws ValueError on invalid symbol
+  def _check_symbol_valid(self, symbol):
     if symbol == None:
-      return self.new_variable()
+      raise ValueError("symbol of None is not allowed")
     elif not symbol in self.SYMBOLS:
-      raise ValueError('symbol "' + symbol + '" not in SYMBOLS')
-    elif symbol in map(lambda (var, sym): sym, self.lookup.items()):
-      return filter(lambda (var, sym): sym == symbol, self.lookup.items())[0][0]
-    else:
-      return self.new_variable(symbol)
+      raise ValueError("symbol '%s' not in SYMBOLS" % str(symbol) )
 
-  def unused_symbol(self):
+  # throws ValueError on invalid or used symbol
+  def _check_symbol_valid_new(self, symbol):
+    self._check_symbol_valid(symbol)
+    if self.variable_for(symbol) != None:
+      raise ValueError("symbol '%s' already used in VariableSet" % str(symbol) )
+
+  def _unused_symbol(self):
     used = set(map(lambda (var, sym): sym, self.lookup.items()))
     unused = self.SYMBOLS - used
     if len(unused) == 0:
@@ -63,8 +94,20 @@ class VariableSet(object):
   def symbol_for(self, var):
     return self.lookup[var]
 
+  # use self.lookup to backwards-lookup the Variable from the symbol
+  # return None if no variables exist for symbol
+  def variable_for(self, symbol):
+    filtered = filter(lambda (var, sym): sym == symbol, self.lookup.items())
 
-# do not instantiate this class, use variableset.variable(optional_symbol)
+    if len(filtered) == 0:
+      return None
+    elif len(filtered) == 1:
+      return filtered[0][0]
+    else:
+      raise RuntimeError("more than one variable points to same symbol! (symbol=%s)" %symbol)
+
+
+# do not instantiate this class, use variableset.variable(symbol=optional_symbol)
 class Variable(Expression):
   def __init__(self, vset):
     if not isinstance(vset, VariableSet):
