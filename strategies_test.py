@@ -68,7 +68,9 @@ def test_NumberExponent():
   assert_equal(NumberExponent.applicable(intg), True)
   res = NumberExponent.apply(intg).simplified()
   assert_equal(isinstance(res, Product), True)
-  assert_equal(res.a.n, 1 / 3.) # TODO remove floating point division
+  assert_equal(isinstance(res.a, Fraction), True)
+  assert_equal(res.a.numr, 1)
+  assert_equal(res.a.denr, 3)
   assert_equal(res.b.base, var)
   assert_equal(res.b.exponent.n, 3)
 

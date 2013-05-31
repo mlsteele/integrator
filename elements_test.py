@@ -31,6 +31,7 @@ def test_Variable():
   assert_equal(v1.simplified().symbol(), 'x')
   assert_equal(v1.simplified(), v1)
 
+
 def test_VariableSet():
   vset = VariableSet()
   va = vset.variable('a')
