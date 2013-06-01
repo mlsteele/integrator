@@ -1,6 +1,7 @@
 import string
 from fractions import gcd
 
+# TODO make Expression the owner of a VariableSet
 class Expression(object):
   def __init__(self):
     raise Exception("Expression is an abstract class")
@@ -10,6 +11,14 @@ class Expression(object):
 
   def simplified(self):
     return self
+
+  # TODO figure out how this should interact with different variablesets
+  # TODO consider alternate forms (simplify before test?)
+  def __eq__(self, other):
+    return self.__repr__() == other.__repr__()
+
+  def __ne__(self, other):
+    return not self.__eq__(other)
 
   def latex(self):
     raise Exception("latex not implemented for %s" % self)

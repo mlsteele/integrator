@@ -11,6 +11,20 @@ def assert_equal(a,b):
     raise AssertionError(a, b)
   return True
 
+def assert_true(x):
+  return assert_equal(x, True)
+
+def assert_false(x):
+  return assert_equal(x, False)
+
+def assert_bool(true=None, false=None):
+  true_pass  = assert_true(true)   if true  != None else True
+  false_pass = assert_false(false) if false != None else True
+  return true_pass and false_pass
+
+def assert_fail():
+  raise AssertionError('Assertion', 'Failed')
+
 def do_test(test, name):
   try:
     test()

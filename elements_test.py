@@ -138,6 +138,49 @@ def test_Power():
   assert_equal(p.exponent.n, 3)
   assert_equal(p.simplified().n, 614.125)
 
+
+def test_Equality():
+  x = Number(2)
+  y = Number(2)
+  assert_equal(x, x)
+  assert_equal(x == y, True)
+  assert_equal(x != y, False)
+
+  vset = VariableSet()
+  x = Product(Number(2), vset.variable('b'))
+  y = Product(Number(2), vset.variable('b'))
+  assert_equal(x, y)
+
+  vset = VariableSet()
+  x = Product(Number(2), vset.variable('b'))
+  y = Product(Number(2), vset.variable('c'))
+  assert_equal(x != y, True)
+
+  vset = VariableSet()
+  x = Product(Number(2), vset.variable('b'))
+  y = Product(Number(2), vset.variable('c'))
+  assert_bool(false= x == y)
+  assert_bool(true= x != y)
+
+  vset = VariableSet()
+  x = Product(Number(3), vset.variable('b'))
+  y = Product(Number(2), vset.variable('b'))
+  assert_bool(false= x == y)
+  assert_bool(true= x != y)
+
+  from parser import parse
+
+  vset = VariableSet()
+  x = parse("3x + 2", vset)
+  y = parse("3x + 2", vset)
+  assert_bool(true= x == y, false= x != y)
+
+  vset = VariableSet()
+  x = parse("3x * 2", vset)
+  y = parse("3x * 3", vset)
+  assert_bool(false= x == y, true= x != y)
+
+
 if __name__ == "__main__":
   do_test(test_Expression,  "Expression")
   do_test(test_Number,      "Number")
@@ -147,3 +190,4 @@ if __name__ == "__main__":
   do_test(test_Product,     "Product")
   do_test(test_Fraction,    "Fraction")
   do_test(test_Power,       "Power")
+  do_test(test_Equality,    "Equality")
