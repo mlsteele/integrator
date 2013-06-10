@@ -1,7 +1,8 @@
 from elements import *
 
-def _add_constant(expr, vset):
-  return Sum(expr, vset.new_variable(suggest='C'))
+# add on integration uncertainty variable
+def add_integration_constant(expr, original_intg):
+  return Sum(expr, original_intg.var.vset.new_variable(suggest='C'))
 
 
 class IntegrationStrategy(object):
@@ -23,13 +24,14 @@ class ConstantTerm(IntegrationStrategy):
 
   @classmethod
   def apply(self, intg):
-    intg_const = intg.var.vset.new_variable()
-    return Sum(Product(intg.exp, intg.var), intg_const)
+    exp = intg.exp.simplified()
+    return add_integration_constant(Product(exp, intg.var), intg)
 
 
 # int 4x dx = 4 * int x dx
 class ConstantFactor(IntegrationStrategy):
   description = "integral with a constant factor"
+
   @classmethod
   def applicable(self, intg):
     exp = intg.simplified().exp
@@ -55,7 +57,8 @@ class SimpleIntegral(IntegrationStrategy):
   def apply(self, intg):
     expr = intg.simplified().exp
     half = Fraction(Number(1), Number(2))
-    return Product(half, Power(expr, Number(2)))
+    new_expr = Product(half, Power(expr, Number(2)))
+    return add_integration_constant(new_expr, intg)
 
 
 # int x^3 dx = 1/4 x^4 + C
@@ -73,7 +76,8 @@ class NumberExponent(IntegrationStrategy):
     # TODO do not use floating point reciprocal!!!
     n_plus_one = Sum(expr.exponent, Number(1)).simplified()
     recip_n = n_plus_one.reciprocal()
-    return Product(recip_n, Power(intg.var, n_plus_one))
+    new_expr = Product(recip_n, Power(intg.var, n_plus_one))
+    return add_integration_constant(new_expr, intg)
 
 
 # int x + x^2 dx = int x dx + int x^2 dx
@@ -88,6 +92,7 @@ class DistributeAddition(IntegrationStrategy):
   @classmethod
   def apply(self, intg):
     exp = intg.simplified().exp
-    return Sum(Integral(exp.a, intg.var), Integral(exp.b, intg.var))
+    new_expr = Sum(Integral(exp.a, intg.var), Integral(exp.b, intg.var))
+    return add_integration_constant(new_expr, intg)
 
 STRATEGIES = [ConstantTerm, ConstantFactor, SimpleIntegral, NumberExponent, DistributeAddition]
