@@ -29,7 +29,7 @@ class Number(Expression):
     self.n = n
 
   def __repr__(self):
-    return str(self.n)
+    return "{!r}".format(self.n)
 
 
 # unique set of variables
@@ -127,7 +127,7 @@ class Variable(Expression):
     return self.vset.symbol_for(self)
 
   def __repr__(self):
-    return self.symbol()
+    return "{0}".format(self.symbol())
 
 
 class Sum(Expression):
