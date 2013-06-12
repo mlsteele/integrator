@@ -110,6 +110,14 @@ def test_Fraction():
   assert_equal(isinstance(s.simplified().numr, Number), True)
   assert_equal(s.simplified().numr.n, 17)
 
+  vset = VariableSet()
+  x = vset.variable()
+  y = Number(1)
+  s = Fraction(x,y)
+  assert_equal(isinstance(s.simplified(), Variable), True)
+  assert_equal(s.simplified().symbol(), x.symbol())
+  assert_equal(s.simplified(), x)
+
 
 def test_Integral():
   exp = Number(5)

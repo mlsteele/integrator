@@ -175,6 +175,8 @@ class Fraction(Expression):
   def simplified(self):
     numr = self.numr.simplified()
     denr = self.denr.simplified()
+    if isinstance(denr, Number) and denr.n == 1:
+      return numr
     if isinstance(numr, Number) and isinstance(denr, Number):
       gcd_ = gcd(numr.n, denr.n)
       return Fraction(numr.n / gcd_, denr.n / gcd_)
