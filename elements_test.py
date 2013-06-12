@@ -111,6 +111,13 @@ def test_Fraction():
   assert_equal(s.simplified().numr.n, 17)
 
   vset = VariableSet()
+  x = Number(6)
+  y = Number(3)
+  s = Fraction(x,y)
+  assert_equal(isinstance(s.simplified(), Number), True)
+  assert_equal(s.simplified().n, 2)
+
+  vset = VariableSet()
   x = vset.variable()
   y = Number(1)
   s = Fraction(x,y)
