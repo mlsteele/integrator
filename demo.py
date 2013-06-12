@@ -31,7 +31,11 @@ def attempt_intgral(expr):
     return expr
 
 if __name__ == "__main__":
-  # attempt_intgral(parse("intx^2dx"))
-  # attempt_intgral(parse("(1.0 / 3.0) * (x ^ 3.0)"))
-  # print Fraction(Number(4), Number(2)).simplified()
-  print parse("((1 / 2) * (x ^ 2))").simplified()
+  ss = ["intxdx", "intx^2dx", "int 3 x^(2 * 3) dx", "int x + 3 dx"]
+  for s in ss:
+    expr = parse(s)
+    print expr
+    attempt_intgral(expr)
+    print 2 * "\n"
+    print "-----"
+    print 2 * "\n"
