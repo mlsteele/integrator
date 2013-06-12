@@ -34,4 +34,6 @@ if __name__ == "__main__":
   # attempt_intgral(parse("intx^2dx"))
   # attempt_intgral(parse("(1.0 / 3.0) * (x ^ 3.0)"))
   # print Fraction(Number(4), Number(2)).simplified()
-  print parse("((1 / 2) * (x ^ 2))").simplified()
+  # print attempt_intgral(parse("intxdx"))
+  # print attempt_intgral(parse("((1 / 2) * (x ^ 2))"))
+  print Product(Number(2), Number('1'))

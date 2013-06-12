@@ -35,7 +35,7 @@ if __name__ == "__main__":
   for s in ss:
     expr = parse(s)
     print expr
-    attempt_intgral(expr)
+    print "\n end result: %s" % attempt_intgral(expr)
     print 2 * "\n"
     print "-----"
     print 2 * "\n"
