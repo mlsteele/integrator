@@ -10,11 +10,15 @@ PARENS_LEFT  = ['(', '[']
 PARENS_RIGHT = [')', ']']
 OPERATORS = ["*", "+", "/", "-","(",")","[","]"]
 
+
 class ParseError(Exception): pass
 
-def tokenize(s):
-  def isnum(s): return bool(re.match('\d*\.?\d*$', s))
 
+def _isnum(s):
+  return bool(re.match('\d*\.?\d*$', s))
+
+
+def tokenize(s):
   character_stream = list(s)
   tokens = [' '] # initial space eases logic edge cases
 
@@ -37,7 +41,7 @@ def tokenize(s):
 
 
     def default(char):
-      if isnum(char) or char in VariableSet.SYMBOLS.union(set(BIN_OPS), set(PARENS_FLAT)):
+      if _isnum(char) or char in VariableSet.SYMBOLS.union(set(BIN_OPS), set(PARENS_FLAT)):
         tokens.append(char)
       else:
         raise ParseError("uknown char to tokenize: %s" %char)
@@ -45,9 +49,9 @@ def tokenize(s):
     # catch spaces
     if char == ' ':
       pass
-    elif isnum(tokens[-1]):
+    elif _isnum(tokens[-1]):
       # number -> number
-      if isnum(char):
+      if _isnum(char):
         tokens[-1] += char
       # number -> (symbol | left paren)
       elif char in VariableSet.SYMBOLS or char in PARENS_LEFT:
@@ -56,19 +60,19 @@ def tokenize(s):
         default(char)
     elif tokens[-1] in VariableSet.SYMBOLS:
       # symbol -> (symbol | number | left paren)
-      if char in VariableSet.SYMBOLS or isnum(char) or char in PARENS_LEFT:
+      if char in VariableSet.SYMBOLS or _isnum(char) or char in PARENS_LEFT:
         tokens += ['*', char]
       else:
         default(char)
     elif tokens[-1] in PARENS_RIGHT:
-      if char in PARENS_LEFT or char in VariableSet.SYMBOLS or isnum(char):
+      if char in PARENS_LEFT or char in VariableSet.SYMBOLS or _isnum(char):
         tokens += ['*', char]
       else:
         default(char)
     elif tokens[-1] in PARENS_LEFT:
       # paren -> paren
       if char in PARENS_FLAT:
-        tokens += ['*', char]
+        tokens += [char]
       else:
         default(char)
     else:
@@ -91,7 +95,7 @@ def parse_tokens(tokens, vset=None, debug=False):
       l,t,r = tokens[first_index - 1], tokens[first_index], tokens[first_index + 1]
 
       if isinstance(l, str) or isinstance(r, str):
-        raise ParseError("left or right of binop is a string\n    l: %s\n    r: %s" %(l,r))
+        raise ParseError("left or right of binop is a string\n    l: {0!r}\n    r: {1!r}".format(l,r))
 
       new_token = binops[t](l,t,r)
       tokens = tokens[0:first_index - 1] + [new_token] + tokens[first_index + 2:]
@@ -183,8 +187,8 @@ def parse_tokens(tokens, vset=None, debug=False):
   if debug: print "    parsing numbers"
   def numbers(token):
     # TODO floats?
-    if isinstance(token, str) and token.isdigit():
-      return Number(float(token))
+    if isinstance(token, str) and _isnum(token):
+      return Number(int(token))
     else:
       return token
   tokens = [numbers(t) for t in tokens]
@@ -203,8 +207,8 @@ def parse_tokens(tokens, vset=None, debug=False):
   # TODO division
   if debug: print "    parsing multiplication"
   binops = {
-    '*': lambda l,t,r: Product(l, r) }
-    # '/': lambda l,t,r: Fraction(l, r) }
+    '*': lambda l,t,r: Product(l, r) ,
+    '/': lambda l,t,r: Fraction(l, r) }
   tokens = scan_binops(tokens, binops)
 
   # addition, subtraction
@@ -266,3 +270,7 @@ if __name__ == "__main__":
   # p = parse_tokens(ts)
   # print "parsed: %s" %p
   # print "simplified: %s" %p.simplified()
+
+  # s = "(1.0 / 3.0)"
+  # print tokenize(s)
+  # print parse(s)
