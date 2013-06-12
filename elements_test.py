@@ -128,14 +128,18 @@ def test_Fraction():
 
 def test_Integral():
   exp = Number(5)
-  intg = Integral(exp, 'x')
+  vset = VariableSet()
+  x1 = vset.variable('x')
+  intg = Integral(exp, x1)
   assert_equal(intg.exp.n, 5)
   assert_equal(intg.var.symbol(), 'x')
 
   exp = Sum(Number(5), Number(3))
-  intg = Integral(exp, 'y')
-  assert_equal(intg.simplify().exp.n, 8)
-  assert_equal(intg.simplify().var.symbol(), 'y')
+  vset = VariableSet()
+  y1 = vset.variable('y')
+  intg = Integral(exp, y1)
+  assert_equal(intg.simplified().exp.n, 8)
+  assert_equal(intg.simplified().var.symbol(), 'y')
 
 
 def test_Power():
@@ -204,5 +208,6 @@ if __name__ == "__main__":
   do_test(test_Sum,         "Sum")
   do_test(test_Product,     "Product")
   do_test(test_Fraction,    "Fraction")
+  do_test(test_Integral,    "Integral")
   do_test(test_Power,       "Power")
   do_test(test_Equality,    "Equality")
