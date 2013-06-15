@@ -50,10 +50,10 @@ class TestElements(unittest.TestCase):
     self.assertEqual(DistributeAddition.applicable(intg), True)
     res = DistributeAddition.apply(intg)
     self.assertEqual(isinstance(res, Sum), True)
-    self.assertEqual(res.a.exp.n, 4)
-    self.assertEqual(res.a.var.symbol(), 'A')
-    self.assertEqual(res.b.exp.symbol(), 'y')
-    self.assertEqual(res.b.var.symbol(), 'A')
+    self.assertEqual(res.a.a.exp.n, 4)
+    self.assertEqual(res.a.a.var.symbol(), 'A')
+    self.assertEqual(res.a.b.exp.symbol(), 'y')
+    self.assertEqual(res.a.b.var.symbol(), 'A')
 
 
   def test_NumberExponent(self):
@@ -70,8 +70,8 @@ class TestElements(unittest.TestCase):
     intg = Integral(exp, var)
     self.assertEqual(NumberExponent.applicable(intg), True)
     res = NumberExponent.apply(intg).simplified()
-    self.assertEqual(isinstance(res, Product), True)
-    self.assertEqual(isinstance(res.a, Fraction), True)
+    self.assertEqual(isinstance(res.a, Product), True)
+    self.assertEqual(isinstance(res.a.a, Fraction), True)
     self.assertEqual(res.a.numr, 1)
     self.assertEqual(res.a.denr, 3)
     self.assertEqual(res.b.base, var)
