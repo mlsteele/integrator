@@ -2,19 +2,29 @@ from flask import Flask
 from flask import app, make_response, render_template
 app = Flask(__name__)
 
-import demo
+from treelogger import TreeLogger
+from parseintg import parse
+from doodle import attempt_integral
+
 
 @app.route("/")
 def index():
   # return '<a href"http://localhost:5000/demo">Demo</a>'
-  resp = make_response('<a href="/demo">Demo</a>')
+  resp = make_response('<a href="/tree">Tree</a>')
   resp.mimetype = 'text/html'
   return resp
 
-@app.route("/demo")
-def hello():
-  demo.run()
-  return demo.logger.dump().replace('\n', '<br>')
+
+@app.route("/tree")
+def tree():
+  log = TreeLogger('root')
+  attempt_integral(parse("intxdx"), log)
+  body = '<br>'.join([msg for (level, log, msg) in log.entries])
+
+  resp = make_response(body)
+  resp.mimetype = 'text/html'
+  return resp
+
 
 if __name__ == "__main__":
-  app.run()
+  app.run(debug=True)
