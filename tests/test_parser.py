@@ -1,6 +1,6 @@
 import unittest
 
-from parser import *
+from parseintg import tokenize
 
 class TestElements(unittest.TestCase):
   def test_tokenize(self):

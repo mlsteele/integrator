@@ -3,7 +3,7 @@ import unittest
 from elements import *
 from strategies import *
 
-class TestElements(unittest.TestCase):
+class TestStrategies(unittest.TestCase):
 
   def test_IntegrationStrategy(self):
     try:
@@ -72,10 +72,10 @@ class TestElements(unittest.TestCase):
     res = NumberExponent.apply(intg).simplified()
     self.assertEqual(isinstance(res.a, Product), True)
     self.assertEqual(isinstance(res.a.a, Fraction), True)
-    self.assertEqual(res.a.numr, 1)
-    self.assertEqual(res.a.denr, 3)
-    self.assertEqual(res.b.base, var)
-    self.assertEqual(res.b.exponent.n, 3)
+    self.assertEqual(res.a.a.numr, 1)
+    self.assertEqual(res.a.a.denr, 3)
+    self.assertEqual(res.a.b.base, var)
+    self.assertEqual(res.a.b.exponent.n, 3)
 
 
 if __name__ == "__main__":

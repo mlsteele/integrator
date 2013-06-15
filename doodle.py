@@ -1,6 +1,6 @@
 from elements import *
 from strategies import *
-from parser import parse
+from parseintg import parse
 
 def attempt_intgral(expr):
   print "I will attempt to solve %s." % expr

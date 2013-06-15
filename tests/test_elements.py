@@ -1,6 +1,7 @@
 import unittest
 
 from elements import *
+from parseintg import parse
 
 class TestElements(unittest.TestCase):
   def test_Expression(self):
@@ -187,8 +188,6 @@ class TestElements(unittest.TestCase):
     y = Product(Number(2), vset.variable('b'))
     self.assertFalse(x == y)
     self.assertTrue(x != y)
-
-    from parser import parse
 
     vset = VariableSet()
     x = parse("3x + 2", vset)

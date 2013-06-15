@@ -1,6 +1,6 @@
 from elements import *
 from strategies import *
-from parser import parse
+from parseintg import parse
 
 class Logger(object):
   def __init__(self):
