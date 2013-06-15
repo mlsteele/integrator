@@ -25,6 +25,10 @@ class TreeLogger(object):
     return '\n'.join(['{}{}) {}'.format('  '*level, dot_titles(log), payload)
       for (level, log, payload) in self._entries])
 
+  @property
+  def entries(self):
+    return self._entries
+
   def parent_titles(self):
     if self.parent:
       return self.parent.parent_titles() + [self.parent.title]

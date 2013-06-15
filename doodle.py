@@ -1,39 +1,44 @@
 from elements import *
 from strategies import *
 from parseintg import parse
+from treelogger import TreeLogger
 
-def attempt_intgral(expr):
-  print "I will attempt to solve %s." % expr
+def attempt_intgral(expr, log):
+  log.push("I will attempt to solve %s." % expr)
   expr = expr.simplified()
-  print "I can simplify it to %s." % expr
+  log.push("I can simplify it to %s." % expr)
 
   if isinstance(expr, Integral):
-    print "%s is an integral" % expr
+    log.push("%s is an integral" % expr)
 
     for strategy in STRATEGIES:
       if strategy.applicable(expr):
-        print "I will use the %s rule" % strategy.description
-        return attempt_intgral(strategy.apply(expr))
+        log.push("I will use the %s rule" % strategy.description)
+        return attempt_intgral(strategy.apply(expr), log)
 
-    print "I think I'm stuck."
+    log.push("I think I'm stuck.")
     return expr
   elif isinstance(expr, Sum):
-    print "%s is a sum" % expr
-    print "I will solve the two sub-problems of %s and %s" %(expr.a, expr.b)
-    print ""
-    print "subproblem:"
-    sub_a = attempt_intgral(expr.a)
-    print "subproblem:"
-    sub_b = attempt_intgral(expr.b)
+    log.push("%s is a sum" % expr)
+    log.push("I will solve the two sub-problems of %s and %s" %(expr.a, expr.b))
+    sub_a = attempt_intgral(expr.a, log.split('subproblem-a'))
+    sub_b = attempt_intgral(expr.b, log.split('subproblem-b'))
     return Sum(sub_a, sub_b)
   else:
-    print "%s is not an integral, I think I'm stuck." % expr
+    log.push("%s is not an integral, I think I'm stuck." % expr)
     return expr
 
+
 if __name__ == "__main__":
-  # attempt_intgral(parse("intx^2dx"))
-  # attempt_intgral(parse("(1.0 / 3.0) * (x ^ 3.0)"))
-  # print Fraction(Number(4), Number(2)).simplified()
-  # print attempt_intgral(parse("intxdx"))
-  # print attempt_intgral(parse("((1 / 2) * (x ^ 2))"))
-  print Product(Number(2), Number('1'))
+  ss = ["intxdx", "intx^2dx", "int 3 x^(2 * 3) dx", "int x + 3 dx"]
+  for s in ss:
+    expr = parse(s)
+    log = TreeLogger('root')
+    result = attempt_intgral(parse(s), log)
+    print log.dump()
+    print result
+
+    print 2 * "\n"
+    print '-' * 5
+    print 2 * "\n"
+
