@@ -3,29 +3,35 @@ from strategies import *
 from parseintg import parse
 from treelogger import TreeLogger
 
-def attempt_integral(expr, log):
-  log.push("I will attempt to solve %s." % expr)
-  expr = expr.simplified()
-  log.push("I can simplify it to %s." % expr)
+def attempt_integral(expr_raw, log):
+  log.push("I will attempt to solve %s." % expr_raw)
+  expr = expr_raw.simplified()
+  if expr != expr_raw:
+    log.push("I can simplify it to %s." % expr)
 
   if isinstance(expr, Integral):
     log.push("%s is an integral" % expr)
 
+    log.push("Which of my strategies are applicable to this integral?")
     for strategy in STRATEGIES:
       if strategy.applicable(expr):
-        log.push("I will use the %s rule" % strategy.description)
-        return attempt_integral(strategy.apply(expr), log)
+        log.push("The {} rule is applicable, I will try it".format(strategy.description))
+        applied = strategy.apply(expr)
+        return attempt_integral(applied, log)
+      else:
+        log.push("The {} rule is not applicable".format(strategy.description))
 
-    log.push("I think I'm stuck.")
+    log.push("None of my integration strategies will work. I think I'm stuck.")
     return expr
   elif isinstance(expr, Sum):
-    log.push("%s is a sum" % expr)
-    log.push("I will solve the two sub-problems of %s and %s" %(expr.a, expr.b))
+    log.push("{} is a sum. I will solve the two sub-problems and then add the results.".format(expr))
     sub_a = attempt_integral(expr.a, log.split('subproblem-a'))
     sub_b = attempt_integral(expr.b, log.split('subproblem-b'))
-    return Sum(sub_a, sub_b)
+    combined = Sum(sub_a, sub_b)
+    log.push("I will add the results of the sub-problems back together to get {}.".format(combined))
+    return combined
   else:
-    log.push("%s is not an integral, I think I'm stuck." % expr)
+    log.push("{} is not an integral, good enough.".format(expr))
     return expr
 
 

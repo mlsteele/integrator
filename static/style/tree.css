@@ -1,0 +1,17 @@
+body {
+  background-color: #85BFE6;
+}
+
+.root {
+  background-color: #77B7E2;
+}
+
+.subproblem-a {
+  background-color: #356348;
+  float: left;
+}
+
+.subproblem-b {
+  background-color: #334963;
+  float: right;
+}

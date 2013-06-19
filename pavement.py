@@ -19,6 +19,13 @@ def testsopen():
 
 
 @task
+def server():
+  # import webbrowser
+  # webbrowser.open("http://localhost:5000")
+  subprocess.call("python web.py".split(' '))
+
+
+@task
 def taskdebug():
   """ Stuff for debugging paver tasks. """
   print "__name__: {}".format(__name__)
