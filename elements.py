@@ -31,6 +31,8 @@ class Number(Expression):
   def __repr__(self):
     return "{!r}".format(self.n)
 
+  def latex(self):
+    return "{!r}".format(self.n)
 
 # unique set of variables
 class VariableSet(object):
@@ -129,6 +131,8 @@ class Variable(Expression):
   def __repr__(self):
     return "{0}".format(self.symbol())
 
+  def latex(self):
+    return "{0}".format(self.symbol())
 
 class Sum(Expression):
   def __init__(self, a, b):
@@ -144,6 +148,9 @@ class Sum(Expression):
       return Sum(a, b)
 
   def __repr__(self):
+    return "(%s + %s)" %(self.a, self.b)
+  
+  def latex(self):
     return "(%s + %s)" %(self.a, self.b)
 
 
@@ -162,6 +169,9 @@ class Product(Expression):
 
   def __repr__(self):
     return "(%s * %s)" %(self.a, self.b)
+
+  def latex(self):
+    return "%s \cdot %s" %(self.a, self.b)
 
 
 class Fraction(Expression):
@@ -189,6 +199,8 @@ class Fraction(Expression):
   def __repr__(self):
     return "(%s / %s)" %(self.numr, self.denr)
 
+  def latex(self):
+    return "\frac{%s}{%s}" %(self.numr, self.denr)
 
 class Power(Expression):
   def __init__(self, base, exponent):
@@ -205,6 +217,9 @@ class Power(Expression):
 
   def __repr__(self):
     return "(%s ^ %s)" %(self.base, self.exponent)
+  
+  def latex(self) :
+    return "{%s}^{%s}" %(self.base, self.exponent)
 
 
 class Integral(Expression):
@@ -217,3 +232,6 @@ class Integral(Expression):
 
   def __repr__(self):
     return "int[%s]d%s" %(self.exp, self.var)
+
+  def latex(self):
+    return "\int{%s}\;d%s" %(self.exp, self.var)
