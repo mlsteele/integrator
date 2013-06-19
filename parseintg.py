@@ -26,8 +26,9 @@ def tokenize(s):
   while len(character_stream) > 0:
     char = character_stream[0]
 
-    # recue integrals starts
-    # WARN: this section advances on its own and then continues to a new state of the loop
+    # recue integrals starts 
+    #WARN: this section advances on its own and then continues to a
+    # new state of the loop
     if character_stream[0:len(INTG_START)] == list(INTG_START):
       tokens.append(INTG_START)
       # advance character stream an EXTRA 2 notches
