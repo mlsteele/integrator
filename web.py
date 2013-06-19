@@ -1,6 +1,6 @@
 from flask import Flask
 from flask import app, make_response, render_template
-from flaskext.lesscss import lesscss
+# from flaskext.lesscss import lesscss
 
 from treelogger import TreeLogger
 from parseintg import parse
@@ -31,4 +31,4 @@ def tree():
 
 if __name__ == "__main__":
   app.run(debug=True)
-  lesscss(app)
+  # lesscss(app)
