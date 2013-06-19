@@ -34,7 +34,6 @@ def attempt_integral(expr_raw, log):
     log.push("{} is not an integral, good enough.".format(expr))
     return expr
 
-
 if __name__ == "__main__":
   log = TreeLogger('root')
   attempt_integral(parse("intxdx"), log)

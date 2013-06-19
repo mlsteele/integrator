@@ -1,1 +1,2 @@
-simplify subproblem constant combination
+* TODO [0/1]
+ - [ ] simplify subproblem constant combination
