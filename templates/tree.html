@@ -3,8 +3,17 @@
 <head>
   <title>Integration</title>
   <link rel="stylesheet" href="/static/style/tree.css" type="text/css" />
+  <script type="text/javascript"
+    src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
 </head>
 <body>
+  <div style="background-color: white; padding: 1.5em;">
+    Does LaTeX rendering work?
+    <br>
+    \[ \int x^2 dx \]
+    \[ \psi \epsilon \rho \]
+  </div>
   {{ raw_content|safe }}
 </body>
 </html>
