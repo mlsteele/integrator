@@ -26,7 +26,16 @@ def index():
   attempt_integral(parse(problem_input), log)
 
   body = ''
+  current_level = -1
+  current_logger = 0
   for (level, log, msg) in log.entries:
+    if level > current_level:
+      body += "<div clas=\"log-level log-level-{}\">".format(level) * (level - current_level)
+      current_level = level
+    elif level < current_level:
+      body += "</div>" * (current_level - level)
+      current_level = level
+
     body += "<span class='{cssclass}'> {msg} </span>".format(cssclass=log.title, msg=msg)
     body += '<br>'
 
