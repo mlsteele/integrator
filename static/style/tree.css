@@ -1,17 +1,18 @@
 body {
   background-color: #FFFFFF;
+  line-height: 1.5em;
 }
 
 .root {
-  background-color: #B3DAFF;
+  color: #547594;
 }
 
 .subproblem-a {
-  background-color: #B08CE6;
+  color: #5B4181;
   float: left;
 }
 
 .subproblem-b {
-  background-color: #E6B38C;
+  color: #8D6547;
   float: right;
 }
