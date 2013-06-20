@@ -5,6 +5,20 @@ def add_integration_constant(expr, original_intg):
   return Sum(expr, original_intg.var.vset.new_variable(suggest='C'))
 
 
+# returns true if the expression is a constant with respect to the variable
+def is_constant(expr, var) :
+  if isinstance(expr, Number) :
+    return True
+  elif isinstance(expr, Variable) :
+    return (expr != var)
+  elif isinstance(expr, Sum) or isinstance(expr, Product):
+    return is_constant(expr.a, var) and is_constant(expr.b, var)
+  elif isinstance(expr, Fraction):
+    return is_constant(expr.numr, var) and is_constant(expr.denr, var)
+  else :
+    return False
+
+
 class IntegrationStrategy(object):
   def __init__(self):
     raise "Strategy is an abstract class"
@@ -19,8 +33,7 @@ class ConstantTerm(IntegrationStrategy):
 
   @classmethod
   def applicable(self, intg):
-    exp = intg.simplified().exp
-    return isinstance(exp, Number) and isinstance(intg.simplified().exp, Number)
+    return is_constant(intg.exp, intg.var)
 
   @classmethod
   def apply(self, intg):
@@ -35,23 +48,23 @@ class ConstantFactor(IntegrationStrategy):
   @classmethod
   def applicable(self, intg):
     exp = intg.simplified().exp
-    return isinstance(exp, Product) and (isinstance(exp.a, Number) or isinstance(exp.b, Number))
+    return isinstance(exp, Product) and is_constant(exp.a, intg.var) or is_constant(exp.b, intg.var)
 
   @classmethod
   def apply(self, intg):
     exp = intg.simplified().exp
-    integrand, constant_factor = sorted([exp.a, exp.b], key=lambda e: isinstance(e, Number))
+    integrand, constant_factor = sorted([exp.a, exp.b], key=lambda e: is_constant(e, intg.var) )
     return Product(constant_factor, Integral(integrand, intg.var))
 
 
 # int x dx = 1/2 x^2 + C
 class SimpleIntegral(IntegrationStrategy):
-  description = "integral with a power of 1"
+  description = "integral of the integration variable occuring by itself."
 
   @classmethod
   def applicable(self, intg):
     expr = intg.simplified().exp
-    return isinstance(expr, Variable)
+    return isinstance(expr, Variable) and (expr is intg.var)
 
   @classmethod
   def apply(self, intg):
@@ -94,5 +107,13 @@ class DistributeAddition(IntegrationStrategy):
     exp = intg.simplified().exp
     new_expr = Sum(Integral(exp.a, intg.var), Integral(exp.b, intg.var))
     return add_integration_constant(new_expr, intg)
+
+# class OneOverX(IntegrationStrategy):
+#   description = "The integral of 1/x is ln(x)."
+  
+#   @classmethod
+#   def applicable(self, intg):
+#     exp = intg.simplified().exp
+#     return isInstance(exp, Fraction)
 
 STRATEGIES = [ConstantTerm, ConstantFactor, SimpleIntegral, NumberExponent, DistributeAddition]
