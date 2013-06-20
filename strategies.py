@@ -48,7 +48,7 @@ class ConstantFactor(IntegrationStrategy):
   @classmethod
   def applicable(self, intg):
     exp = intg.simplified().exp
-    return isinstance(exp, Product) and is_constant(exp.a, intg.var) or is_constant(exp.b, intg.var)
+    return isinstance(exp, Product) and (is_constant(exp.a, intg.var) or is_constant(exp.b, intg.var))
 
   @classmethod
   def apply(self, intg):
@@ -108,12 +108,19 @@ class DistributeAddition(IntegrationStrategy):
     new_expr = Sum(Integral(exp.a, intg.var), Integral(exp.b, intg.var))
     return add_integration_constant(new_expr, intg)
 
-# class OneOverX(IntegrationStrategy):
-#   description = "The integral of 1/x is ln(x)."
+class OneOverX(IntegrationStrategy):
+  description = "The integral of 1/x is ln(x)."
   
-#   @classmethod
-#   def applicable(self, intg):
-#     exp = intg.simplified().exp
-#     return isInstance(exp, Fraction)
+  @classmethod
+  def applicable(self, intg):
+    exp = intg.simplified().exp
+    return isinstance(exp, Fraction) and is_constant(exp.numr, intg.var) and (exp.denr == intg.var)
 
-STRATEGIES = [ConstantTerm, ConstantFactor, SimpleIntegral, NumberExponent, DistributeAddition]
+  @classmethod
+  def apply(self, intg):
+    return Product(intg.simplified().exp.numr, Logarithm(intg.var))
+
+
+STRATEGIES = [ConstantTerm, ConstantFactor, SimpleIntegral, NumberExponent, DistributeAddition, OneOverX]
+
+

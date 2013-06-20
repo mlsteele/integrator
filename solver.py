@@ -46,3 +46,11 @@ if __name__ == "__main__":
   attempt_integral(parse("3 / 4"), log)
   print log.dump()
 
+
+
+
+def dxh_test():
+  vset = VariableSet()
+  x = vset.variable("x")
+  q = Fraction(Number(1), x)
+  attempt_integral(Integral(q,x),TreeLogger())

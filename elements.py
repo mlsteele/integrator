@@ -221,6 +221,25 @@ class Power(Expression):
   def latex(self) :
     return "{%s}^{%s}" %(self.base.latex(), self.exponent.latex())
 
+class Logarithm(Expression):
+  def __init__(self, arg, base="euler"):
+    self.arg = arg
+    self.base = base
+
+  def simplified(self):
+    return Logarithm(self.arg.simplified(), self.base)
+
+  def __repr__(self):
+    if self.base == "euler" :
+      return "log(%s)" %(self.arg)
+    else :
+      return "log_(%s) %s" %(self.arg, self.base)
+    
+  def latex(self):
+    if self.base == "euler" :
+      return "\log{%s}" %(self.arg.latex())
+    else :
+      return "log_{%s}{%s}" %(self.arg.latex(), self.base.latex())
 
 class Integral(Expression):
   def __init__(self, exp, var):
