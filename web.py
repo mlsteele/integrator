@@ -4,7 +4,7 @@ from flask import app, make_response, render_template
 
 from treelogger import TreeLogger
 from parseintg import parse
-from doodle import attempt_integral
+from solver import attempt_integral
 
 app = Flask(__name__)
 
