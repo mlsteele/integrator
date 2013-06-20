@@ -16,3 +16,7 @@ body {
   color: #8D6547;
   float: right;
 }
+
+.problem-input {
+  width: 200px;
+}

@@ -1,5 +1,7 @@
+import json
+
 from flask import Flask
-from flask import app, make_response, render_template
+from flask import app, make_response, render_template, request
 # from flaskext.lesscss import lesscss
 
 from treelogger import TreeLogger
@@ -16,17 +18,26 @@ def index():
   return resp
 
 
-@app.route("/tree")
-def tree():
+@app.route("/API/solve", methods=['GET'])
+def index():
+  problem_input = request.args.get('problem', u'').encode('ascii', 'ignore')
+
   log = TreeLogger('root')
-  attempt_integral(parse("intxdx"), log)
+  attempt_integral(parse(problem_input), log)
 
   body = ''
   for (level, log, msg) in log.entries:
     body += "<span class='{cssclass}'> {msg} </span>".format(cssclass=log.title, msg=msg)
     body += '<br>'
 
-  return render_template('tree.html', raw_content=body)
+  resp = make_response(body)
+  resp.mimetype = 'text/html'
+  return resp
+
+
+@app.route("/tree")
+def tree():
+  return render_template('tree.html')
 
 
 if __name__ == "__main__":
