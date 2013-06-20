@@ -149,9 +149,9 @@ class Sum(Expression):
 
   def __repr__(self):
     return "(%s + %s)" %(self.a, self.b)
-  
+
   def latex(self):
-    return "(%s + %s)" %(self.a, self.b)
+    return "(%s + %s)" %(self.a.latex(), self.b.latex())
 
 
 class Product(Expression):
@@ -171,7 +171,7 @@ class Product(Expression):
     return "(%s * %s)" %(self.a, self.b)
 
   def latex(self):
-    return "%s \cdot %s" %(self.a, self.b)
+    return "%s \cdot %s" %(self.a.latex(), self.b.latex())
 
 
 class Fraction(Expression):
@@ -200,7 +200,7 @@ class Fraction(Expression):
     return "(%s / %s)" %(self.numr, self.denr)
 
   def latex(self):
-    return "\frac{%s}{%s}" %(self.numr, self.denr)
+    return "\\frac{%s}{%s}" %(self.numr.latex(), self.denr.latex())
 
 class Power(Expression):
   def __init__(self, base, exponent):
@@ -217,9 +217,9 @@ class Power(Expression):
 
   def __repr__(self):
     return "(%s ^ %s)" %(self.base, self.exponent)
-  
+
   def latex(self) :
-    return "{%s}^{%s}" %(self.base, self.exponent)
+    return "{%s}^{%s}" %(self.base.latex(), self.exponent.latex())
 
 
 class Integral(Expression):
@@ -234,4 +234,4 @@ class Integral(Expression):
     return "int[%s]d%s" %(self.exp, self.var)
 
   def latex(self):
-    return "\int{%s}\;d%s" %(self.exp, self.var)
+    return "\\int{%s}\;d%s" %(self.exp.latex(), self.var.latex())
