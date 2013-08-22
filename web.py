@@ -19,7 +19,7 @@ def index():
 
 
 @app.route("/API/solve", methods=['GET'])
-def index():
+def api_solve():
   problem_input = request.args.get('problem', u'').encode('ascii', 'ignore')
 
   log = TreeLogger('root')
