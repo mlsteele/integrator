@@ -19,16 +19,16 @@ def index():
 
 def sublog_to_html(logger):
   html = ""
+  html += "<div class=\"subproblem\">"
   for entry in logger.entries:
     if isinstance(entry, list):
       for sublogger in entry:
-        html += "<div class=\"subproblem\">"
         html += sublog_to_html(sublogger)
-        html += "</div>"
       html += "<div class=\"clearbar\"></div>"
     else:
       html += "<span>{msg}</span><br>".format(msg=entry)
 
+  html += "</div>"
   return html
 
 @app.route("/API/solve", methods=['GET'])
