@@ -4,7 +4,7 @@ from flask import Flask
 from flask import app, make_response, render_template, request
 # from flaskext.lesscss import lesscss
 
-from treelogger import TreeLogger
+from sublogger import SubLogger
 from parseintg import parse
 from solver import attempt_integral
 
@@ -17,27 +17,26 @@ def index():
   resp.mimetype = 'text/html'
   return resp
 
+def sublog_to_html(logger):
+  html = ""
+  for entry in logger.entries:
+    if isinstance(entry, list):
+      for sublogger in entry:
+        html += "<div>"
+        html += sublog_to_html(sublogger)
+        html += "</div>"
+    else:
+      html += "<span>{msg}</span><br>".format(msg=entry)
+
+  return html
 
 @app.route("/API/solve", methods=['GET'])
 def api_solve():
   problem_input = request.args.get('problem', u'').encode('ascii', 'ignore')
 
-  log = TreeLogger('root')
+  log = SubLogger('root')
   attempt_integral(parse(problem_input), log)
-
-  body = ''
-  current_level = -1
-  current_logger = 0
-  for (level, log, msg) in log.entries:
-    if level > current_level:
-      body += "<div clas=\"log-level log-level-{}\">".format(level) * (level - current_level)
-      current_level = level
-    elif level < current_level:
-      body += "</div>" * (current_level - level)
-      current_level = level
-
-    body += "<span class='{cssclass}'> {msg} </span>".format(cssclass=log.title, msg=msg)
-    body += '<br>'
+  body = sublog_to_html(log)
 
   resp = make_response(body)
   resp.mimetype = 'text/html'
