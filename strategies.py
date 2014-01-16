@@ -59,7 +59,7 @@ class ConstantFactor(IntegrationStrategy):
 
 # int x dx = 1/2 x^2 + C
 class SimpleIntegral(IntegrationStrategy):
-  description = "integral of the integration variable occuring by itself."
+  description = "integral of the integration variable occuring by itself"
 
   @classmethod
   def applicable(self, intg):
@@ -110,7 +110,7 @@ class DistributeAddition(IntegrationStrategy):
 
 class OneOverX(IntegrationStrategy):
   description = "The integral of 1/x is ln(x)."
-  
+
   @classmethod
   def applicable(self, intg):
     exp = intg.simplified().exp

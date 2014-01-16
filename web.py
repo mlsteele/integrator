@@ -22,9 +22,10 @@ def sublog_to_html(logger):
   for entry in logger.entries:
     if isinstance(entry, list):
       for sublogger in entry:
-        html += "<div>"
+        html += "<div class=\"subproblem\">"
         html += sublog_to_html(sublogger)
         html += "</div>"
+      html += "<div class=\"clearbar\"></div>"
     else:
       html += "<span>{msg}</span><br>".format(msg=entry)
 

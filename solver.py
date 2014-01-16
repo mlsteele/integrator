@@ -18,11 +18,11 @@ def attempt_integral(expr_raw, logger):
     logger.log("Which of my strategies are applicable to this integral?")
     for strategy in STRATEGIES:
       if strategy.applicable(expr):
-        logger.log("The {} rule is applicable, I will try it".format(strategy.description))
+        logger.log("The \"{}\" rule is applicable, I will try it".format(strategy.description))
         applied = strategy.apply(expr)
         return attempt_integral(applied, logger)
       else:
-        logger.log("The {} rule is not applicable".format(strategy.description))
+        logger.log("The \"{}\" rule is not applicable".format(strategy.description))
 
     logger.log("None of my integration strategies will work. I think I'm stuck.")
     return expr
