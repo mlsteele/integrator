@@ -30,6 +30,10 @@ input[name="problem-input"] {
   border-left: 2px solid #656565;
 }
 
+input[name="problem-solve"] {
+  display: none;
+}
+
 .problem-response {
   padding: 10px 50px;
 }

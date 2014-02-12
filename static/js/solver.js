@@ -3,10 +3,25 @@ $(function(){
 
   var $problem_input = $('input[name="problem-input"]')
   var $problem_solve_btn = $('input[name="problem-solve"]')
+  var $problem_status = $('.problem-status')
   var $problem_response = $('.problem-response')
+
+  function show_status(status) {
+    // status can be "solved", "fetching", or "error"
+    if (status == "solved") {
+      $problem_status.text('solved')
+    } else if (status == "fetching") {
+      $problem_status.text('fetching')
+    } else if (status == "error") {
+      $problem_status.text('error')
+    } else {
+      console.log("unknown status: " + status)
+    }
+  }
 
   function fetch_problem_solution() {
     var val = $problem_input.val()
+    show_status("fetching")
 
     console.log("sending problem to server ", val)
     $.ajax({
@@ -17,6 +32,7 @@ $(function(){
         console.log('solution received from server.')
         // console.log('data', data)
 
+        show_status("solved")
         $problem_response.empty()
         $problem_response.append(data)
 
@@ -24,6 +40,7 @@ $(function(){
       },
       error: function() {
         console.error('error from request!')
+        show_status("error")
       }
     })
   }
