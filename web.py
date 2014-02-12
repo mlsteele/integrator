@@ -10,13 +10,6 @@ from solver import attempt_integral
 
 app = Flask(__name__)
 
-@app.route("/")
-def index():
-  # return '<a href"http://localhost:5000/demo">Demo</a>'
-  resp = make_response('<a href="/tree">Tree</a>')
-  resp.mimetype = 'text/html'
-  return resp
-
 def sublog_to_html(logger):
   html = ""
   html += "<div class=\"subproblem\">"
@@ -44,9 +37,9 @@ def api_solve():
   return resp
 
 
-@app.route("/tree")
-def tree():
-  return render_template('tree.html')
+@app.route("/")
+def solver():
+  return render_template('solver.html')
 
 
 if __name__ == "__main__":
