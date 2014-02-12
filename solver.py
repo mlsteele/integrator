@@ -34,6 +34,14 @@ def attempt_integral(expr_raw, logger):
     combined = Sum(sub_a, sub_b)
     logger.log("I will add the results of the sub-problems back together to get {}.".format(latex_wrap(combined.latex())))
     return combined
+  elif isinstance(expr, Product):
+    logger.log("{} is a product. I will solve the two sub-problems and then multiply the results.".format(latex_wrap(expr.latex())))
+    subproblem_a, subproblem_b = logger.split('subproblem-a', 'subproblem-b')
+    sub_a = attempt_integral(expr.a, subproblem_a)
+    sub_b = attempt_integral(expr.b, subproblem_b)
+    combined = Product(sub_a, sub_b)
+    logger.log("I will multiply the results of the sub-problems back together to get {}.".format(latex_wrap(combined.latex())))
+    return combined
   else:
     logger.log("{} is not an integral, good enough.".format(latex_wrap(expr.latex())))
     return expr
