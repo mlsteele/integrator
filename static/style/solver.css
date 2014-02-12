@@ -7,10 +7,11 @@ body {
 
 header {
   color: white;
-  background-color: #1D415D;
+  background-color: #043D68;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
   font-size: 3em;
   font-family: Verdana;
-  padding: 40px 50px;
+  padding: 45px 50px;
 }
 
 .problem-container {
@@ -19,13 +20,14 @@ header {
 .input-container {
   background-color: #FAFAFA;
   padding: 10px 50px;
+  border: 1px solid #E1E1E1;
 }
 
 input[name="problem-input"] {
-  font-size: 2em;
+  font-size: 1.25em;
   background: none;
-  padding: 10px 20px;
-  border: 1px solid black;
+  padding: 8px 15px;
+  border-left: 2px solid #656565;
 }
 
 .problem-response {
@@ -57,8 +59,9 @@ input[name="problem-input"] {
 }
 
 .subproblem {
-  border: 1px solid black;
-  background: rgba(100, 180, 200, 0.4);
+  /*border-left: 2px solid #656565;*/
+  border: 1px solid #A5CDDE;
+  background: rgba(100, 180, 200, 0.3);
   margin: 10px;
   padding: 20px;
   float: left;

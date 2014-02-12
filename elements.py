@@ -234,7 +234,7 @@ class Logarithm(Expression):
       return "log(%s)" %(self.arg)
     else :
       return "log_(%s) %s" %(self.arg, self.base)
-    
+
   def latex(self):
     if self.base == "euler" :
       return "\log{%s}" %(self.arg.latex())

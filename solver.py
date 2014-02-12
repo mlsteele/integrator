@@ -13,16 +13,17 @@ def attempt_integral(expr_raw, logger):
     logger.log("I can simplify it to %s." % latex_wrap(expr.latex()))
 
   if isinstance(expr, Integral):
-    logger.log("%s is an integral" % latex_wrap(expr.latex()))
+    logger.log("%s is an integral." % latex_wrap(expr.latex()))
 
     logger.log("Which of my strategies are applicable to this integral?")
     for strategy in STRATEGIES:
       if strategy.applicable(expr):
-        logger.log("The \"{}\" rule is applicable, I will try it".format(strategy.description))
+        logger.log("The \"{}\" rule is applicable, I will try it.".format(strategy.description))
         applied = strategy.apply(expr)
         return attempt_integral(applied, logger)
       else:
-        logger.log("The \"{}\" rule is not applicable".format(strategy.description))
+        # logger.log("The \"{}\" rule is not applicable.".format(strategy.description))
+        pass
 
     logger.log("None of my integration strategies will work. I think I'm stuck.")
     return expr
@@ -43,7 +44,7 @@ def attempt_integral(expr_raw, logger):
     logger.log("I will multiply the results of the sub-problems back together to get {}.".format(latex_wrap(combined.latex())))
     return combined
   else:
-    logger.log("{} is not an integral, good enough.".format(latex_wrap(expr.latex())))
+    logger.log("{} is already simplified.".format(latex_wrap(expr.latex())))
     return expr
 
 if __name__ == "__main__":
