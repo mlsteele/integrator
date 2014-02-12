@@ -22,16 +22,22 @@
 
 </head>
 <body>
-  <div style="background-color: white; padding: 1.5em; display: none;">
+  <header>
+    Symbolic Integrator
+  </header>
+
+  <div class="latex-test">
     Does LaTeX rendering work?
     <br>
     \( \int x^2 dx \)
     \[ \psi \epsilon \rho \]
   </div>
 
-  <div class="problem-wrapper">
-    <input type="text" name="problem-input" value="int x^2 dx">
-    <input type="submit" name="problem-solve" value="Solve">
+  <div class="problem-container">
+    <div class="input-container">
+      <input type="text" name="problem-input" value="int x^2 dx">
+      <input type="submit" name="problem-solve" value="Solve">
+    </div>
     <div class="problem-response"></div>
   </div>
 </body>

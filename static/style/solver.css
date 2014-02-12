@@ -2,6 +2,23 @@ body {
   background-color: #FFFFFF;
   font-family: Helvetica;
   line-height: 1.7em;
+  margin: 0;
+}
+
+header {
+  color: white;
+  background-color: #1D415D;
+  font-size: 3em;
+  font-family: Verdana;
+  padding: 40px 50px;
+}
+
+.problem-container {
+}
+
+.input-container {
+  background-color: #FAFAFA;
+  padding: 10px 50px;
 }
 
 input[name="problem-input"] {
@@ -9,6 +26,16 @@ input[name="problem-input"] {
   background: none;
   padding: 10px 20px;
   border: 1px solid black;
+}
+
+.problem-response {
+  padding: 10px 50px;
+}
+
+.latex-test {
+  background-color: white;
+  padding: 1.5em;
+  display: none;
 }
 
 .root {
