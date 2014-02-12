@@ -4,6 +4,13 @@ body {
   line-height: 1.7em;
 }
 
+input[name="problem-input"] {
+  font-size: 2em;
+  background: none;
+  padding: 10px 20px;
+  border: 1px solid black;
+}
+
 .root {
   color: #547594;
 }
