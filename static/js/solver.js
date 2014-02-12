@@ -8,14 +8,10 @@ $(function(){
 
   function show_status(status) {
     // status can be "solved", "fetching", or "error"
-    if (status == "solved") {
-      $problem_status.text('solved')
-    } else if (status == "fetching") {
-      $problem_status.text('fetching')
-    } else if (status == "error") {
-      $problem_status.text('error')
-    } else {
-      console.log("unknown status: " + status)
+    if (status != "fetching") {
+      $problem_status.text(status)
+      $problem_input.removeClass()
+      $problem_input.addClass("status-" + status)
     }
   }
 

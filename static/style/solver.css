@@ -30,6 +30,19 @@ input[name="problem-input"] {
   border-left: 2px solid #656565;
 }
 
+input[name="problem-input"].status-solved {
+  background-color: #F2FFE5;
+}
+
+input[name="problem-input"].status-fetching {
+  background-color: #E9FFD9;
+}
+
+input[name="problem-input"].status-error {
+  background-color: #FFDFD9;
+}
+
+
 input[name="problem-solve"] {
   display: none;
 }
