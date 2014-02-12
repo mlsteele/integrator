@@ -57,6 +57,21 @@ class ConstantFactor(IntegrationStrategy):
     return Product(constant_factor, Integral(integrand, intg.var))
 
 
+# int x/4 dx = 1/4 * int x dx
+class ConstantDivisor(IntegrationStrategy):
+  description = "integral with a constant divisor"
+
+  @classmethod
+  def applicable(self, intg):
+    exp = intg.simplified().exp
+    return isinstance(exp, Fraction) and (is_constant(exp.denr, intg.var))
+
+  @classmethod
+  def apply(self, intg):
+    exp = intg.simplified().exp
+    return Product(Fraction(Number(1), exp.denr), Integral(exp.numr, intg.var))
+
+
 # int x dx = 1/2 x^2 + C
 class SimpleIntegral(IntegrationStrategy):
   description = "integral of the integration variable occuring by itself"
@@ -121,6 +136,6 @@ class OneOverX(IntegrationStrategy):
     return Product(intg.simplified().exp.numr, Logarithm(intg.var))
 
 
-STRATEGIES = [ConstantTerm, ConstantFactor, SimpleIntegral, NumberExponent, DistributeAddition, OneOverX]
+STRATEGIES = [ConstantTerm, ConstantFactor, ConstantDivisor, SimpleIntegral, NumberExponent, DistributeAddition, OneOverX]
 
 
