@@ -57,6 +57,31 @@ input[name="problem-solve"] {
   display: none;
 }
 
+.strategy-icon {
+  width: 15px;
+  height: 15px;
+  background-color: #9FE1F3;
+  position: relative;
+  display: inline-block;
+}
+
+.strategy-code {
+  position: absolute;
+  top: -30px;
+  left: -40px;
+  color: #EEE;
+  background-color: #4B4B4B;
+  border: 1px solid #585858;
+  display: none;
+  z-index: 20;
+  padding: 15px;
+  box-shadow: 1px 1px 8px rgba(0,0,0,0.8);
+}
+
+.strategy-icon:hover > .strategy-code {
+  display: block;
+}
+
 .root {
   color: #547594;
 }

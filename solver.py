@@ -1,3 +1,5 @@
+import inspect
+
 from elements import *
 from strategies import *
 from parseintg import parse
@@ -5,6 +7,9 @@ from sublogger import SubLogger
 
 def latex_wrap(s):
   return "\( {} \)".format(s)
+
+def newlines_to_breaks(s):
+  return s.replace("\n", "<br>")
 
 def attempt_integral(expr_raw, logger):
   logger.log("I will attempt to solve %s." % latex_wrap(expr_raw.latex()))
@@ -18,7 +23,15 @@ def attempt_integral(expr_raw, logger):
     logger.log("Which of my strategies are applicable to this integral?")
     for strategy in STRATEGIES:
       if strategy.applicable(expr):
-        logger.log("The \"{}\" rule is applicable, I will try it.".format(strategy.description))
+        strategy_source = newlines_to_breaks(inspect.getsource(strategy))
+        strategy_info = '<div class="strategy-icon"><div class="strategy-code"><pre>{}</pre></div></div>'.format(
+          strategy_source
+        )
+
+        logger.log("The \"{}\" rule {} is applicable, I will try it.".format(
+          strategy.description,
+          strategy_info))
+
         applied = strategy.apply(expr)
         return attempt_integral(applied, logger)
       else:
