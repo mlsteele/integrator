@@ -20,6 +20,9 @@ class Expression(object):
   def __ne__(self, other):
     return not self.__eq__(other)
 
+  def is_a(self, klass):
+    return isinstance(self, klass)
+
   def latex(self):
     raise Exception("latex not implemented for %s" % self)
 

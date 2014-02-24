@@ -7,13 +7,13 @@ def add_integration_constant(expr, original_intg):
 
 # returns true if the expression is a constant with respect to the variable
 def is_constant(expr, var) :
-  if isinstance(expr, Number) :
+  if expr.is_a(Number) :
     return True
-  elif isinstance(expr, Variable) :
+  elif expr.is_a(Variable) :
     return (expr != var)
-  elif isinstance(expr, Sum) or isinstance(expr, Product):
+  elif expr.is_a(Sum) or expr.is_a(Product):
     return is_constant(expr.a, var) and is_constant(expr.b, var)
-  elif isinstance(expr, Fraction):
+  elif expr.is_a(Fraction):
     return is_constant(expr.numr, var) and is_constant(expr.denr, var)
   else :
     return False
@@ -48,7 +48,9 @@ class ConstantFactor(IntegrationStrategy):
   @classmethod
   def applicable(self, intg):
     exp = intg.simplified().exp
-    return isinstance(exp, Product) and (is_constant(exp.a, intg.var) or is_constant(exp.b, intg.var))
+    return (exp.is_a(Product)
+      and (is_constant(exp.a, intg.var)
+        or is_constant(exp.b, intg.var)))
 
   @classmethod
   def apply(self, intg):
@@ -64,7 +66,8 @@ class ConstantDivisor(IntegrationStrategy):
   @classmethod
   def applicable(self, intg):
     exp = intg.simplified().exp
-    return isinstance(exp, Fraction) and (is_constant(exp.denr, intg.var))
+    return (exp.is_a(Fraction)
+      and (is_constant(exp.denr, intg.var)))
 
   @classmethod
   def apply(self, intg):
@@ -79,7 +82,7 @@ class SimpleIntegral(IntegrationStrategy):
   @classmethod
   def applicable(self, intg):
     expr = intg.simplified().exp
-    return isinstance(expr, Variable) and (expr is intg.var)
+    return expr.is_a(Variable) and (expr is intg.var)
 
   @classmethod
   def apply(self, intg):
@@ -96,7 +99,10 @@ class NumberExponent(IntegrationStrategy):
   @classmethod
   def applicable(self, intg):
     expr = intg.simplified().exp
-    return isinstance(expr, Power) and isinstance(expr.base, Variable) and (expr.base.symbol == intg.var.symbol) and isinstance(expr.exponent, Number)
+    return (expr.is_a(Power)
+      and expr.base.is_a(Variable)
+      and (expr.base.symbol == intg.var.symbol)
+      and expr.exponent.is_a(Number))
 
   @classmethod
   def apply(self, intg):
@@ -115,7 +121,7 @@ class DistributeAddition(IntegrationStrategy):
   @classmethod
   def applicable(self, intg):
     exp = intg.simplified().exp
-    return isinstance(exp, Sum)
+    return exp.is_a(Sum)
 
   @classmethod
   def apply(self, intg):
@@ -129,7 +135,9 @@ class OneOverX(IntegrationStrategy):
   @classmethod
   def applicable(self, intg):
     exp = intg.simplified().exp
-    return isinstance(exp, Fraction) and is_constant(exp.numr, intg.var) and (exp.denr == intg.var)
+    return (exp.is_a(Fraction)
+      and is_constant(exp.numr, intg.var)
+      and (exp.denr == intg.var))
 
   @classmethod
   def apply(self, intg):
