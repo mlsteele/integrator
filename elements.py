@@ -134,6 +134,7 @@ class Variable(Expression):
   def latex(self):
     return "{0}".format(self.symbol())
 
+
 class Sum(Expression):
   def __init__(self, a, b):
     self.a = a
