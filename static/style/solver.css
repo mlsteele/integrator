@@ -63,6 +63,8 @@ input[name="problem-solve"] {
   background-color: #9FE1F3;
   position: relative;
   display: inline-block;
+  background: url(/static/images/info-icon.png) no-repeat;
+  background-size: contain;
 }
 
 .strategy-code {
