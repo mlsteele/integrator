@@ -1,5 +1,5 @@
 # Integrator
-This is a symbolic integrator based on James Robert Slagle's 1961 thesis.
+This is a symbolic integrator based on James Slagle's 1961 thesis.
 The goal of this project is to solve integrals symbolically
 in an accessible manner.
 The machine will work to solve the integration problem, and will share its
@@ -79,6 +79,11 @@ It is a simple web page which asks the python server
 to solve integration problems for you and then displays
 the results.
 
+The html is in
+`templates/solver.html`
+and the javascript that talks to the server is in
+`static/js/solver.js`.
+
 ### Web Server
 The web server receives requests to solve expressions from
 the web page and passes them on to the underlying layers
@@ -118,6 +123,23 @@ the meat of the integration.
 The solver is responsible for coralling expressions
 into their simplified form, and then trying integration
 strategies to solve the integrals in the expression.
+
+You can run the solver by itself from the command line.
+But the output is not very pretty as it is meant for the web.
+
+    $ python solver.py
+    Enter a string to be integrated.
+    Just press enter to integrate 'int 3 x / 4 dx'
+    -> 
+    I will attempt to solve \( \int{\frac{3 \cdot x}{4}}\;dx \).
+    \( \int{\frac{3 \cdot x}{4}}\;dx \) is an integral.
+    Which of my strategies are applicable to this integral?
+    The "integral with a constant divisor" rule <div class="strategy-icon"><div class="strategy-code"><pre>class ConstantDivisor(IntegrationStrategy):<br>  description = "integral with a constant divisor"<br><br>  @classmethod<br>  def applicable(self, intg):<br>    exp = intg.simplified().exp<br>    return (exp.is_a(Fraction)<br>      and (is_constant(exp.denr, intg.var)))<br><br>  @classmethod<br>  def apply(self, intg):<br>    exp = intg.simplified().exp<br>    return Product(Fraction(Number(1), exp.denr), Integral(exp.numr, intg.var))<br></pre></div></div> is applicable, I will try it.
+    I will attempt to solve \( \frac{1}{4} \cdot \int{3 \cdot x}\;dx \).
+    \( \frac{1}{4} \cdot \int{3 \cdot x}\;dx \) is a product. I will solve the two sub-problems and then multiply the results.
+    [<sublogger.SubLogger object at 0x7f3ff3543490>, <sublogger.SubLogger object at 0x7f3ff3543510>]
+    I will multiply the results of the sub-problems back together to get \( \frac{1}{4} \cdot 3 \cdot (\frac{1}{2} \cdot {x}^{2} + C) \).
+
 
 ### Strategies
 All of the strategies that the solver knows how to
