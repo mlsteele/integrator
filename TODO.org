@@ -1,4 +1,0 @@
-* TODO [0/2]
- - [ ] simplify subproblem constant combination
- - [ ] add widget for which algorithm is in use
- - [ ] add info rollover for strategies
