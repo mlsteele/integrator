@@ -1,3 +1,13 @@
+"""
+Integration Strategies
+
+This file is a booklet of strategies for
+solving integration problems.
+
+Each strategy is a subtype of IntegrationStrategy
+and can apply itself to an expression.
+"""
+
 from elements import *
 
 # add on integration uncertainty variable
@@ -27,8 +37,8 @@ class IntegrationStrategy(object):
     raise "apply not implemented"
 
 
-# int 4 dx = 4x + C
 class ConstantTerm(IntegrationStrategy):
+  example = "int 4 dx = 4x + C"
   description = "integral of a constant term"
 
   @classmethod
@@ -41,8 +51,8 @@ class ConstantTerm(IntegrationStrategy):
     return add_integration_constant(Product(exp, intg.var), intg)
 
 
-# int 4x dx = 4 * int x dx
 class ConstantFactor(IntegrationStrategy):
+  example = "int 4x dx = 4 * int x dx"
   description = "integral with a constant factor"
 
   @classmethod
@@ -59,8 +69,8 @@ class ConstantFactor(IntegrationStrategy):
     return Product(constant_factor, Integral(integrand, intg.var))
 
 
-# int x/4 dx = 1/4 * int x dx
 class ConstantDivisor(IntegrationStrategy):
+  example = "int x/4 dx = 1/4 * int x dx"
   description = "integral with a constant divisor"
 
   @classmethod
@@ -75,8 +85,8 @@ class ConstantDivisor(IntegrationStrategy):
     return Product(Fraction(Number(1), exp.denr), Integral(exp.numr, intg.var))
 
 
-# int x dx = 1/2 x^2 + C
 class SimpleIntegral(IntegrationStrategy):
+  example = "int x dx = 1/2 x^2 + C"
   description = "integral of the integration variable occuring by itself"
 
   @classmethod
@@ -92,8 +102,8 @@ class SimpleIntegral(IntegrationStrategy):
     return add_integration_constant(new_expr, intg)
 
 
-# int x^3 dx = 1/4 x^4 + C
 class NumberExponent(IntegrationStrategy):
+  example = "int x^3 dx = 1/4 x^4 + C"
   description = "integral with a numerical exponent"
 
   @classmethod
@@ -114,8 +124,8 @@ class NumberExponent(IntegrationStrategy):
     return add_integration_constant(new_expr, intg)
 
 
-# int x + x^2 dx = int x dx + int x^2 dx
 class DistributeAddition(IntegrationStrategy):
+  example = "int x + x^2 dx = int x dx + int x^2 dx"
   description = "integral of sums to sum of integrals"
 
   @classmethod
@@ -145,5 +155,3 @@ class OneOverX(IntegrationStrategy):
 
 
 STRATEGIES = [ConstantTerm, ConstantFactor, ConstantDivisor, SimpleIntegral, NumberExponent, DistributeAddition, OneOverX]
-
-

@@ -1,7 +1,20 @@
+"""
+Parser for integral expressions.
+
+The parse function of this module parses a string
+into an expressions made of elements from elements.py
+
+The implementation is verbose and hard to read.
+It will be replaced soon, and the addition of new features
+to parse will be more possible.
+Until that day, tests/test_parser can help make sure
+that this module behaves itself.
+"""
+
 import re
 from elements import *
 
-# TODO condense these constants
+# TODO remove redundancy from these constants
 BIN_OPS = ['*', '+', '/', '-', '^']
 INTG_START = 'int'
 PARENS = [['(', ')'], ['[', ']']]

@@ -1,8 +1,37 @@
+"""
+Elements of expressions.
+
+Expressions are composed of subclasses of the Expression class.
+
+There are two basic expressions:
+- Number
+- Variable
+
+There are a few binary composition expressions:
+- Sum
+- Product
+- Fraction
+- Power
+- Logarithm
+
+And finally there is the Integral expression which
+represents an indefinite integral and contains
+an expression to integrate and a variable to integrate
+with respect to.
+
+There is also VariableSet which is a hack that
+tries to help make variables unique. It will
+be gone soon.
+"""
+
 import string
 from fractions import gcd
 
-# TODO make Expression the owner of a VariableSet
 class Expression(object):
+  """
+  Expression is the base class for all types of elements of expressions.
+  It cannot be instantiated.
+  """
   def __init__(self):
     raise Exception("Expression is an abstract class")
 
@@ -12,23 +41,43 @@ class Expression(object):
   def simplified(self):
     return self
 
-  # TODO figure out how this should interact with different variablesets
-  # TODO consider alternate forms (simplify before test?)
   def __eq__(self, other):
+    """
+    Test whether two expressions are equal.
+
+    TODO Consider what this means.
+         Are expressions equal that simplify to the same thing?
+    """
     return self.__repr__() == other.__repr__()
 
   def __ne__(self, other):
     return not self.__eq__(other)
 
   def is_a(self, klass):
+    """
+    Utility method to clean up strategies.
+    Used like this
+    x = Number(1)
+    x.is_a(Number) -> True
+    """
     return isinstance(self, klass)
 
   def latex(self):
+    """
+    Convert an expression into its LaTeX representation
+    for displaying.
+    """
     raise Exception("latex not implemented for %s" % self)
 
 
 class Number(Expression):
+  """
+  A basic element containg a single number.
+  """
   def __init__(self, n):
+    """
+    Takes a single number `n` which is the value of this Number.
+    """
     self.n = n
 
   def __repr__(self):
@@ -37,8 +86,11 @@ class Number(Expression):
   def latex(self):
     return "{!r}".format(self.n)
 
-# unique set of variables
+
 class VariableSet(object):
+  """
+  A unique set of variables.
+  """
   SYMBOLS = set(string.letters)
   MAX_VARIABLES = len(SYMBOLS)
 
@@ -121,14 +173,26 @@ class VariableSet(object):
       raise RuntimeError("more than one variable points to same symbol! (symbol=%s)" %symbol)
 
 
-# do not instantiate this class, use variableset.variable(symbol=optional_symbol)
 class Variable(Expression):
+  """
+  A variable.
+
+  This class should not be instantiated.
+  Creating a variable from a VariableSet is currently
+  the preferred method of creating a new variable.
+  This will change soon.
+  Until then call variableset.variable(symbol=optional_symbol)
+  """
   def __init__(self, vset):
     if not isinstance(vset, VariableSet):
       raise Exception('Variable instantiated without VariableSet')
     self.vset = vset
 
   def symbol(self):
+    """
+    Get the symbol of the variable.
+    For example, 'x'.
+    """
     return self.vset.symbol_for(self)
 
   def __repr__(self):
@@ -139,14 +203,24 @@ class Variable(Expression):
 
 
 class Sum(Expression):
+  """
+  An expression representing the sum of two sub-expressions.
+  """
   def __init__(self, a, b):
+    """
+    a and b are the left and right operands of the sum 'a + b'.
+    """
     self.a = a
     self.b = b
 
   def simplified(self):
+    """
+    Get the simplified form of the sum.
+    """
     a = self.a.simplified()
     b = self.b.simplified()
-    if isinstance(a, Number) and isinstance(b, Number):
+    # If both operands are numbers, then sum their values.
+    if a.is_a(Number) and b.is_a(Number):
       return Number(a.n + b.n)
     else:
       return Sum(a, b)
@@ -159,14 +233,21 @@ class Sum(Expression):
 
 
 class Product(Expression):
+  """
+  An expression representing the product of two sub-expressions.
+  """
   def __init__(self, a, b):
+    """
+    a and b are the left and right operands of the sum 'a + b'.
+    """
     self.a = a
     self.b = b
 
   def simplified(self):
     a = self.a.simplified()
     b = self.b.simplified()
-    if isinstance(a, Number) and isinstance(b, Number):
+    # If both operands are numbers, then multiply their values.
+    if a.is_a(Number) and b.is_a(Number):
       return Number(a.n * b.n)
     else:
       return Product(a, b)
@@ -179,7 +260,13 @@ class Product(Expression):
 
 
 class Fraction(Expression):
+  """
+  An expression representing a fraction.
+  """
   def __init__(self, numr, denr):
+    """
+    Create the fraction (numr / denr).
+    """
     self.numr = numr
     self.denr = denr
 
@@ -190,12 +277,12 @@ class Fraction(Expression):
     numr = self.numr.simplified()
     denr = self.denr.simplified()
 
-    if isinstance(numr, Number) and isinstance(denr, Number):
-      gcd_ = gcd(numr.n, denr.n)
-      numr = Number(numr.n / gcd_)
-      denr = Number(denr.n / gcd_)
+    if numr.is_a(Number) and denr.is_a(Number):
+      this_gcd = gcd(numr.n, denr.n)
+      numr = Number(numr.n / this_gcd)
+      denr = Number(denr.n / this_gcd)
 
-    if isinstance(denr, Number) and denr.n == 1:
+    if denr == Number(1):
       return numr
     else:
       return Fraction(numr, denr)
@@ -206,18 +293,22 @@ class Fraction(Expression):
   def latex(self):
     return "\\frac{%s}{%s}" %(self.numr.latex(), self.denr.latex())
 
+
 class Power(Expression):
   def __init__(self, base, exponent):
+    """
+    `base` to the power `exponent`.
+    """
     self.base     = base
     self.exponent = exponent
 
   def simplified(self):
     base     = self.base.simplified()
     exponent = self.exponent.simplified()
-    if isinstance(base, Number) and isinstance(exponent, Number):
+    if base.is_a(Number) and exponent.is_a(Number):
       return Number(base.n ** exponent.n)
     else:
-      return Power(base.simplified(), exponent.simplified())
+      return Power(base, exponent)
 
   def __repr__(self):
     return "(%s ^ %s)" %(self.base, self.exponent)
@@ -225,8 +316,12 @@ class Power(Expression):
   def latex(self) :
     return "{%s}^{%s}" %(self.base.latex(), self.exponent.latex())
 
+
 class Logarithm(Expression):
   def __init__(self, arg, base="euler"):
+    """
+    The logarithm base `base` of `arg`.
+    """
     self.arg = arg
     self.base = base
 
@@ -245,13 +340,20 @@ class Logarithm(Expression):
     else :
       return "log_{%s}{%s}" %(self.arg.latex(), self.base.latex())
 
+
 class Integral(Expression):
+  """
+  An expression represent a single integral.
+  """
   def __init__(self, exp, var):
+    """
+    The integral of `exp` with respect to the variable `var`.
+    """
     self.exp = exp
     self.var = var
 
   def simplified(self):
-    return Integral(self.exp.simplified(), self.var)
+    return Integral(self.exp.simplified(), self.var.simplified())
 
   def __repr__(self):
     return "int[%s]d%s" %(self.exp, self.var)
