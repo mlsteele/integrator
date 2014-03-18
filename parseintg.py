@@ -250,17 +250,6 @@ def parse(s, vset=None, debug=False):
   return parse_tokens(tokenize(s), vset=vset, debug=debug)
 
 if __name__ == "__main__":
-  # s = "a(2)"
-  # print s
-  # ts = tokenize(s)
-  # print "tokens: %s" % ts
-  # p = parse_tokens(ts, debug=False)
-  # print p
-  # print p.simplified()
-
-  # a = [1,2,'+',3,'+',4,5,6,7,'*',8,10]
-
-  # s = 'int 2*2x^(0-2) dx'
   s = 'int 2*2x^(3) dx'
   print "string: \"%s\"" %s
   ts = tokenize(s)
@@ -268,23 +257,3 @@ if __name__ == "__main__":
   p = parse_tokens(ts)
   print "parsed: %s" %p
   print "simplified: %s" %p.simplified()
-  from strategies import *
-  print "Can I apply the ConstantFactor method? %s" % ConstantFactor.applicable(p)
-  x = ConstantFactor.apply(p)
-  print x
-  print "Can I apply the DistributeAddition method? %s" % DistributeAddition.applicable(x.b)
-  print "Can I apply the NumberExponent method? %s" % NumberExponent.applicable(x.b)
-  x.b = NumberExponent.apply(x.b)
-  print x
-
-  # s = '2^3'
-  # print "string: %s" %s
-  # ts = tokenize(s)
-  # print "tokens: %s" %ts
-  # p = parse_tokens(ts)
-  # print "parsed: %s" %p
-  # print "simplified: %s" %p.simplified()
-
-  # s = "(1.0 / 3.0)"
-  # print tokenize(s)
-  # print parse(s)

@@ -56,20 +56,20 @@ class TestStrategies(unittest.TestCase):
     self.assertEqual(res.a.b.var.symbol(), 'A')
 
 
-  def test_NumberExponent(self):
+  def test_ConstantPower(self):
     vset = VariableSet()
     var = vset.variable()
     var2 = vset.variable()
     exp = Power(var, Number(2))
     intg = Integral(exp, var2)
-    self.assertEqual(NumberExponent.applicable(intg), False)
+    self.assertEqual(ConstantPower.applicable(intg), False)
 
     vset = VariableSet()
     var = vset.variable()
     exp = Power(var, Number(2))
     intg = Integral(exp, var)
-    self.assertEqual(NumberExponent.applicable(intg), True)
-    res = NumberExponent.apply(intg).simplified()
+    self.assertEqual(ConstantPower.applicable(intg), True)
+    res = ConstantPower.apply(intg).simplified()
     self.assertEqual(isinstance(res.a, Product), True)
     self.assertEqual(isinstance(res.a.a, Fraction), True)
     self.assertEqual(res.a.a.numr, 1)

@@ -15,8 +15,10 @@ def add_integration_constant(expr, original_intg):
   return Sum(expr, original_intg.var.vset.new_variable(suggest='C'))
 
 
-# returns true if the expression is a constant with respect to the variable
 def is_constant(expr, var) :
+  """
+  Test whether the expression is constant with respect to the variable.
+  """
   if expr.is_a(Number) :
     return True
   elif expr.is_a(Variable) :
@@ -102,9 +104,9 @@ class SimpleIntegral(IntegrationStrategy):
     return add_integration_constant(new_expr, intg)
 
 
-class NumberExponent(IntegrationStrategy):
+class ConstantPower(IntegrationStrategy):
   example = "int x^3 dx = 1/4 x^4 + C"
-  description = "integral with a numerical exponent"
+  description = "integral with a constant exponent"
 
   @classmethod
   def applicable(self, intg):
@@ -112,12 +114,12 @@ class NumberExponent(IntegrationStrategy):
     return (expr.is_a(Power)
       and expr.base.is_a(Variable)
       and (expr.base.symbol == intg.var.symbol)
-      and expr.exponent.is_a(Number))
+      and is_constant(expr.exponent, intg.var))
 
   @classmethod
   def apply(self, intg):
     expr = intg.simplified().exp
-    # TODO do not use floating point reciprocal!!!
+    # TODO: Do not use floating point reciprocal, use fraction instead.
     n_plus_one = Sum(expr.exponent, Number(1)).simplified()
     recip_n = n_plus_one.reciprocal()
     new_expr = Product(recip_n, Power(intg.var, n_plus_one))
@@ -154,4 +156,4 @@ class OneOverX(IntegrationStrategy):
     return Product(intg.simplified().exp.numr, Logarithm(intg.var))
 
 
-STRATEGIES = [ConstantTerm, ConstantFactor, ConstantDivisor, SimpleIntegral, NumberExponent, DistributeAddition, OneOverX]
+STRATEGIES = [ConstantTerm, ConstantFactor, ConstantDivisor, SimpleIntegral, ConstantPower, DistributeAddition, OneOverX]
